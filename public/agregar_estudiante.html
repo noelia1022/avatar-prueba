@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Estudiante - Sistema Avatar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background-color: #2e86de;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="formTitle">Agregar Nuevo Estudiante</h1>
+        
+        <form id="estudianteForm">
+            <div class="form-group">
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" name="cedula" required>
+                <div id="cedulaError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento">
+            </div>
+            
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo">
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono">
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" id="submitButton" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelar()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const urlParams = new URLSearchParams(window.location.search);
+        const editarId = urlParams.get('editar');
+        
+        if(!token) {
+            alert('Debe iniciar sesión primero');
+            window.location.href = 'index.html';
+        }
+
+        // Configurar modo edición
+        if (editarId) {
+            document.getElementById('formTitle').textContent = 'Editar Estudiante';
+            document.getElementById('submitButton').textContent = 'Actualizar';
+            cargarDatosEstudiante(editarId);
+        }
+
+        // Cargar datos del estudiante para edición
+        async function cargarDatosEstudiante(id) {
+            try {
+                const response = await fetch(`/api/estudiantes/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if(!response.ok) throw new Error('Error al cargar estudiante');
+                
+                const { estudiante } = await response.json();
+                
+                if (!estudiante) throw new Error('Estudiante no encontrado');
+                
+                // Llenar formulario con datos existentes
+                document.getElementById('cedula').value = estudiante.Cedula || '';
+                document.getElementById('nombre').value = estudiante.Nombre || '';
+                document.getElementById('fechaNacimiento').value = estudiante.FechaNacimiento || '';
+                document.getElementById('correo').value = estudiante.Correo || '';
+                document.getElementById('telefono').value = estudiante.Telefono || '';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar estudiante: ' + error.message);
+                window.location.href = 'estudiantes.html';
+            }
+        }
+
+        // Validar cédula única (solo en modo creación)
+        document.getElementById('cedula').addEventListener('blur', async function() {
+            if (editarId) return; // No validar en edición
+            
+            const cedula = this.value.trim();
+            const errorDiv = document.getElementById('cedulaError');
+            
+            if (cedula) {
+                try {
+                    const response = await fetch(`/api/estudiantes/verificar-cedula?cedula=${encodeURIComponent(cedula)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if(!response.ok) throw new Error('Error al verificar cédula');
+                    
+                    const result = await response.json();
+                    
+                    if (result.existe) {
+                        errorDiv.textContent = 'Esta cédula ya está registrada';
+                    } else {
+                        errorDiv.textContent = '';
+                    }
+                } catch (error) {
+                    console.error('Error al verificar cédula:', error);
+                    errorDiv.textContent = 'Error al verificar cédula';
+                }
+            }
+        });
+
+        // Enviar formulario
+        document.getElementById('estudianteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cedulaError = document.getElementById('cedulaError');
+            if (cedulaError.textContent && !editarId) {
+                alert('Por favor corrija el error de cédula antes de continuar');
+                return;
+            }
+            
+            const formData = {
+                cedula: document.getElementById('cedula').value.trim(),
+                nombre: document.getElementById('nombre').value.trim(),
+                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                correo: document.getElementById('correo').value.trim(),
+                telefono: document.getElementById('telefono').value.trim()
+            };
+            
+            try {
+                const url = editarId ? `/api/estudiantes/${editarId}` : '/api/estudiantes';
+                const method = editarId ? 'PUT' : 'POST';
+                
+                console.log('Enviando datos:', formData);
+                console.log('URL:', url);
+                console.log('Método:', method);
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                console.log('Respuesta del servidor:', result);
+                
+                if (response.ok) {
+                    alert(editarId ? 'Estudiante actualizado correctamente' : 'Estudiante creado correctamente');
+                    window.location.href = 'estudiantes.html';
+                } else {
+                    throw new Error(result.message || 'Error al procesar la solicitud');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            }
+        });
+
+        function cancelar() {
+            window.location.href = 'estudiantes.html';
+        }
+    </script>
+</body>
+</html>

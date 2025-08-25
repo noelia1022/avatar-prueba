@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avatar - Usuarios</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%);
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            color: #1e3a8a;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .logo-birrete {
+            font-size: 2.8rem;
+            color: #fbbf24;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+            animation: gentle-float 3s ease-in-out infinite;
+        }
+        
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        nav {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        nav a {
+            margin: 8px 15px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.95em;
+        }
+        
+        nav a:hover {
+            color: #1e3a8a;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .table-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.08);
+            border: 2px solid rgba(59, 130, 246, 0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.05);
+        }
+        
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+            transform: scale(1.01);
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: rgba(248, 250, 252, 0.5);
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            font-family: inherit;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            font-size: 1em;
+        }
+        
+        .btn-add:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+        }
+        
+        .add-button-container {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .status-active {
+            color: #10b981;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-inactive {
+            color: #ef4444;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            nav {
+                padding: 15px;
+            }
+            
+            nav a {
+                margin: 5px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            
+            .table-container {
+                padding: 20px;
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+            
+            th, td {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <h1>
+        <span class="logo-birrete">🎓</span>
+        Gestión de Usuarios
+    </h1>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="estudiantes.html">Estudiantes</a>
+        <a href="profesores.html">Profesores</a>
+        <a href="materias.html">Materias</a>
+        <a href="planes.html">Planes de estudio</a>
+        <a href="matricula.html">Matrícula</a>
+        <a href="pagos.html">Pagos</a>
+        <a href="configuracion.html">Configuración</a>
+    </nav>
+
+    <div class="table-container">
+        <div class="add-button-container">
+            <button class="btn btn-add" onclick="location.href='agregar_usuario.html'">
+                <i class="fas fa-plus"></i> Agregar Usuario
+            </button>
+        </div>
+
+        <table id="usuariosTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los datos se cargarán dinámicamente con JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Obtener token de localStorage
+        const token = localStorage.getItem('token');
+        
+        if(!token) {
+            alert('Debe iniciar sesión primero');
+            window.location.href = 'index.html';
+        }
+
+        // Función para cargar los usuarios desde la API
+        async function cargarUsuarios() {
+    try {
+        console.log('Cargando usuarios...');
+        const response = await fetch('/api/usuarios', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if(!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('API response:', result);
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Error en la respuesta del servidor');
+        }
+        
+        const tbody = document.querySelector('#usuariosTable tbody');
+        tbody.innerHTML = '';
+        
+        result.usuarios.forEach(usuario => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${usuario.UsuarioID}</td>
+                <td>${usuario.NombreCompleto}</td>
+                <td>${usuario.Correo}</td>
+                <td>${usuario.NombreRol}</td>
+                <td class="${usuario.Estado ? 'status-active' : 'status-inactive'}">
+                    ${usuario.Estado ? 'Activo' : 'Inactivo'}
+                </td>
+                <td class="actions">
+                    <button class="btn btn-edit" onclick="editarUsuario(${usuario.UsuarioID})">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    ${usuario.NombreRol !== 'Administrador' ? 
+                      `<button class="btn btn-delete" onclick="eliminarUsuario(${usuario.UsuarioID})">
+                         <i class="fas fa-trash"></i> Eliminar
+                       </button>` : 
+                      ''}
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        console.log('Usuarios cargados correctamente');
+        
+    } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+        alert('Error al cargar usuarios: ' + error.message);
+    }
+}
+        
+        // Función para editar usuario
+function editarUsuario(id) {
+    location.href = `agregar_usuario.html?editar=${id}`;
+}
+
+        
+        
+        // Función para eliminar usuario
+        async function eliminarUsuario(id) {
+            if (confirm('¿Está seguro de eliminar este usuario?')) {
+                try {
+                    const response = await fetch(`/api/usuarios/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        alert('Usuario eliminado correctamente');
+                        cargarUsuarios();
+                    } else {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Error al eliminar usuario');
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar usuario:', error);
+                    alert('Error al eliminar usuario: ' + error.message);
+                }
+            }
+        }
+        
+        // Cargar usuarios al cargar la página
+        document.addEventListener('DOMContentLoaded', cargarUsuarios);
+    </script>
+</body>
+</html>

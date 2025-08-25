@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagos - Sistema Avatar</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #2e86de; }
+    .btn {
+      display: inline-block; padding: 10px 15px; margin: 10px 0;
+      border-radius: 5px; text-decoration: none; font-weight: bold;
+    }
+    .btn-primary { background: #2e86de; color: white; }
+    .btn-primary:hover { background: #1c6bc7; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background: #2e86de; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h1>Gestión de Pagos</h1>
+  <div style="text-align:right;">
+    <a href="registrar_pago.html" class="btn btn-primary">+ Registrar Pago</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Estudiante</th>
+        <th>Cédula</th>
+        <th>Período</th>
+        <th>Fecha Pago</th>
+        <th>Monto (₡)</th>
+        <th>Método</th>
+      </tr>
+    </thead>
+    <tbody id="tablaPagos">
+      <tr><td colspan="6">Cargando pagos...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if(!token) {
+      alert('Debe iniciar sesión');
+      window.location.href = 'index.html';
+    }
+
+    async function cargarPagos() {
+      try {
+        const res = await fetch('/api/pagos', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById('tablaPagos');
+        tbody.innerHTML = '';
+
+        if (!data.success || data.pagos.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6">No hay pagos registrados</td></tr>';
+          return;
+        }
+
+        data.pagos.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.Estudiante}</td>
+            <td>${p.Cedula}</td>
+            <td>${p.Periodo} ${p.Anio}</td>
+            <td>${new Date(p.FechaPago).toLocaleDateString('es-CR')}</td>
+            <td>₡${Number(p.Monto).toLocaleString('es-CR')}</td>
+            <td>${p.MetodoPago}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error cargando pagos:', err);
+      }
+    }
+    cargarPagos();
+  </script>
+</body>
+</html>

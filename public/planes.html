@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avatar - Planes de Estudio</title>
+    <style>
+        /* Estilos consistentes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        nav a {
+            margin: 10px;
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #2e86de;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #2e86de;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-add {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+        .btn-view {
+            background-color: #3498db;
+            color: white;
+        }
+        .status-active {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gestión de Planes de Estudio</h1>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="usuarios.html">Usuarios</a>
+        <a href="estudiantes.html">Estudiantes</a>
+        <a href="profesores.html">Profesores</a>
+        <a href="materias.html">Materias</a>
+        <a href="planes.html">Planes de Estudio</a>
+        <a href="matricula.html">Matrícula</a>
+        <a href="pagos.html">Pagos</a>
+        <a href="configuracion.html">Configuración</a>
+    </nav>
+
+    <div style="text-align: right;">
+        <button class="btn btn-add" onclick="abrirModal()">+ Agregar Plan</button>
+    </div>
+
+    <table id="planesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Año Inicio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos se cargarán dinámicamente con JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Modal para agregar/editar plan -->
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2 id="modalTitle">Agregar Plan de Estudio</h2>
+            
+            <form id="planForm">
+                <input type="hidden" id="planId" value="">
+                
+                <div class="form-group">
+                    <label for="nombrePlan">Nombre del Plan:</label>
+                    <input type="text" id="nombrePlan" required>
+                    <div id="nombrePlanError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="anioInicio">Año de Inicio:</label>
+                    <input type="number" id="anioInicio" min="2000" max="2100" required>
+                    <div id="anioInicioError" class="error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-submit">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let planesData = [];
+        let modoEdicion = false;
+
+        // Función para cargar los planes desde la base de datos
+        async function cargarPlanes() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('No está autenticado. Será redirigido a la página de inicio de sesión.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const response = await fetch('/api/planes', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.status === 401) {
+                    alert('Sesión expirada. Por favor, inicie sesión nuevamente.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    planesData = result.planes;
+                    
+                    const tbody = document.querySelector('#planesTable tbody');
+                    tbody.innerHTML = '';
+                    
+                    planesData.forEach(plan => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${plan.PlanID}</td>
+                            <td>${plan.NombrePlan}</td>
+                            <td>${plan.AnioInicio}</td>
+                            <td class="${plan.Estado ? 'status-active' : 'status-inactive'}">
+                                ${plan.Estado ? 'Activo' : 'Inactivo'}
+                            </td>
+                            <td class="actions">
+                                <button class="btn btn-view" onclick="verMateriasPlan(${plan.PlanID})">Materias</button>
+                                <button class="btn btn-edit" onclick="editarPlan(${plan.PlanID})">Editar</button>
+                                <button class="btn btn-delete" onclick="desactivarPlan(${plan.PlanID})">Desactivar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    console.error('Error al cargar planes:', result.message);
+                    alert('Error al cargar planes: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error al cargar planes:', error);
+                alert('Error de conexión al cargar planes.');
+            }
+        }
+        
+        // Función para abrir el modal
+        function abrirModal() {
+            modoEdicion = false;
+            document.getElementById('modalTitle').textContent = 'Agregar Plan de Estudio';
+            document.getElementById('planForm').reset();
+            document.getElementById('planId').value = '';
+            
+            // Establecer año actual como valor por defecto
+            const anioActual = new Date().getFullYear();
+            document.getElementById('anioInicio').value = anioActual;
+            
+            document.getElementById('planModal').style.display = 'block';
+        }
+        
+        // Función para cerrar el modal
+        function cerrarModal() {
+            document.getElementById('planModal').style.display = 'none';
+        }
+        
+        // Función para editar plan
+        function editarPlan(id) {
+            const plan = planesData.find(p => p.PlanID === id);
+            if (plan) {
+                modoEdicion = true;
+                document.getElementById('modalTitle').textContent = 'Editar Plan de Estudio';
+                document.getElementById('planId').value = plan.PlanID;
+                document.getElementById('nombrePlan').value = plan.NombrePlan;
+                document.getElementById('anioInicio').value = plan.AnioInicio;
+                document.getElementById('estado').value = plan.Estado ? '1' : '0';
+                
+                document.getElementById('planModal').style.display = 'block';
+            }
+        }
+        
+        // Función para validar el formulario
+        function validarFormulario() {
+            let isValid = true;
+            
+            // Limpiar mensajes de error
+            document.getElementById('nombrePlanError').textContent = '';
+            document.getElementById('anioInicioError').textContent = '';
+            
+            // Validar nombre del plan
+            const nombrePlan = document.getElementById('nombrePlan').value.trim();
+            if (nombrePlan === '') {
+                document.getElementById('nombrePlanError').textContent = 'El nombre del plan es requerido';
+                isValid = false;
+            }
+            
+            // Validar año de inicio
+            const anioInicio = document.getElementById('anioInicio').value;
+            if (anioInicio === '' || anioInicio < 2000 || anioInicio > 2100) {
+                document.getElementById('anioInicioError').textContent = 'Ingrese un año válido entre 2000 y 2100';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Función para enviar el formulario
+async function enviarFormulario(event) {
+  event.preventDefault();
+  
+  if (!validarFormulario()) {
+    return;
+  }
+  
+  const planData = {
+    NombrePlan: document.getElementById('nombrePlan').value.trim(),
+    AnioInicio: parseInt(document.getElementById('anioInicio').value),
+    Estado: parseInt(document.getElementById('estado').value)
+  };
+  
+  try {
+    const token = localStorage.getItem('token');
+    const planId = document.getElementById('planId').value;
+    let url = '/api/planes';
+    let method = 'POST';
+    
+    if (modoEdicion && planId) {
+      url = `/api/planes/${planId}`;
+      method = 'PUT';
+    }
+    
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(planData)
+    });
+    
+    if (response.ok) {
+      alert(`Plan ${modoEdicion ? 'actualizado' : 'creado'} correctamente`);
+      cerrarModal();
+      cargarPlanes();
+    } else {
+      const errorData = await response.json();
+      alert('Error: ' + (errorData.message || 'Intente nuevamente'));
+    }
+  } catch (error) {
+    console.error('Error al guardar plan:', error);
+    alert('Error de conexión. Intente nuevamente.');
+  }
+}
+        
+        // Función para desactivar plan (en lugar de eliminar)
+async function desactivarPlan(id) {
+  if (confirm('¿Está seguro de desactivar este plan de estudio? Las materias asociadas no se mostrarán en opciones activas.')) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/planes/${id}/inactivar`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        alert('Plan desactivado correctamente');
+        cargarPlanes();
+      } else {
+        const errorData = await response.json();
+        alert('Error al desactivar plan: ' + (errorData.message || 'Intente nuevamente'));
+      }
+    } catch (error) {
+      console.error('Error al desactivar plan:', error);
+      alert('Error de conexión. Intente nuevamente.');
+    }
+  }
+}
+        
+        // Función para ver materias de un plan
+        function verMateriasPlan(id) {
+            location.href = `materias_plan.html?plan=${id}`;
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No está autenticado. Será redirigido a la página de inicio de sesión.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            cargarPlanes();
+            document.getElementById('planForm').addEventListener('submit', enviarFormulario);
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('planModal');
+                if (event.target === modal) {
+                    cerrarModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

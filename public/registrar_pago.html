@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Pago - Sistema Avatar</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #27ae60; }
+    form {
+      max-width: 600px; margin: auto; background: white; padding: 20px;
+      border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    select, input {
+      width: 100%; padding: 10px; margin-top: 5px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button {
+      margin-top: 20px; padding: 12px; width: 100%;
+      background: #27ae60; color: white; font-size: 16px;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    button:hover { background: #219150; }
+    .btn-back {
+      display: inline-block; margin-bottom: 20px; padding: 10px 15px;
+      background: #2e86de; color: white; text-decoration: none;
+      border-radius: 5px; font-weight: bold;
+    }
+    .btn-back:hover { background: #1c6bc7; }
+    .info-box {
+      background-color: #f8f9fa;
+      border-left: 4px solid #27ae60;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Registrar Pago</h1>
+  <div style="text-align:center;">
+    <a href="pagos.html" class="btn-back">← Volver a Pagos</a>
+  </div>
+
+  <form id="formPago">
+    <label for="matricula">Matrícula:</label>
+    <select id="matricula" required>
+      <option value="">Cargando matrículas...</option>
+    </select>
+
+    <div id="infoMatricula" class="info-box" style="display: none;">
+      <h3>Información de la Matrícula</h3>
+      <p><strong>Estudiante:</strong> <span id="estudianteInfo"></span></p>
+      <p><strong>Período:</strong> <span id="periodoInfo"></span></p>
+      <p><strong>Materias inscritas:</strong> <span id="materiasInfo"></span></p>
+    </div>
+
+    <label for="monto">Monto a Pagar (₡):</label>
+    <input type="text" id="monto" readonly required value="0">
+
+    <label for="fechaPago">Fecha de Pago:</label>
+    <input type="date" id="fechaPago" required value="<?php echo date('Y-m-d'); ?>">
+
+    <label for="metodo">Método de Pago:</label>
+    <select id="metodo" required>
+      <option value="Efectivo">Efectivo</option>
+      <option value="Tarjeta">Tarjeta</option>
+      <option value="Transferencia">Transferencia</option>
+    </select>
+
+    <button type="submit">Registrar Pago</button>
+  </form>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Debe iniciar sesión');
+      window.location.href = 'index.html';
+    }
+
+    const matriculaSelect = document.getElementById('matricula');
+    const montoInput = document.getElementById('monto');
+    const infoMatricula = document.getElementById('infoMatricula');
+    const estudianteInfo = document.getElementById('estudianteInfo');
+    const periodoInfo = document.getElementById('periodoInfo');
+    const materiasInfo = document.getElementById('materiasInfo');
+
+    // Cargar matrículas disponibles
+    async function cargarMatriculas() {
+      try {
+        const res = await fetch('/api/matriculas', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!data.success || data.matriculas.length === 0) {
+          matriculaSelect.innerHTML = '<option value="">No hay matrículas disponibles</option>';
+          return;
+        }
+
+        matriculaSelect.innerHTML = '<option value="">Seleccione una matrícula</option>';
+        data.matriculas.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.MatriculaID;
+          opt.textContent = `${m.Estudiante} - ${m.Periodo} ${m.Anio}`;
+          // Guardar información adicional en el elemento option
+          opt.dataset.estudiante = m.Estudiante;
+          opt.dataset.periodo = `${m.Periodo} ${m.Anio}`;
+          matriculaSelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error('Error cargando matrículas:', err);
+        matriculaSelect.innerHTML = '<option value="">Error al cargar matrículas</option>';
+      }
+    }
+
+    // Calcular monto según materias y mostrar información
+    async function calcularMonto(matriculaID) {
+      if (!matriculaID) {
+        infoMatricula.style.display = 'none';
+        montoInput.value = '0';
+        return;
+      }
+      
+      try {
+        // Mostrar información básica de la matrícula seleccionada
+        const selectedOption = matriculaSelect.options[matriculaSelect.selectedIndex];
+        estudianteInfo.textContent = selectedOption.dataset.estudiante || '';
+        periodoInfo.textContent = selectedOption.dataset.periodo || '';
+        
+        // Obtener detalles de las materias
+        const res = await fetch(`/api/matriculas/${matriculaID}/materias`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (data.success && data.materias.length > 0) {
+          let total = data.materias.reduce((sum, m) => sum + (m.Costo || 0), 0);
+          montoInput.value = total.toLocaleString('es-CR'); // mostrar con formato
+          
+          // Mostrar información de materias
+          materiasInfo.textContent = data.materias.map(m => m.Nombre).join(', ');
+          infoMatricula.style.display = 'block';
+        } else {
+          montoInput.value = '0';
+          materiasInfo.textContent = 'No hay materias registradas';
+          infoMatricula.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Error calculando monto:', err);
+        montoInput.value = '0';
+        infoMatricula.style.display = 'none';
+      }
+    }
+
+    // Establecer fecha actual por defecto
+    document.getElementById('fechaPago').valueAsDate = new Date();
+
+    matriculaSelect.addEventListener('change', e => calcularMonto(e.target.value));
+
+    // Enviar formulario
+    document.getElementById('formPago').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      if (!matriculaSelect.value) {
+        alert('Por favor, seleccione una matrícula');
+        return;
+      }
+
+      const montoLimpio = montoInput.value.replace(/[^\d]/g, ''); // quitar formato
+
+      const pago = {
+        MatriculaID: matriculaSelect.value,
+        Monto: montoLimpio,
+        FechaPago: document.getElementById('fechaPago').value,
+        MetodoPago: document.getElementById('metodo').value
+      };
+
+      try {
+        const res = await fetch('/api/pagos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(pago)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert('Pago registrado correctamente');
+          window.location.href = 'pagos.html';
+        } else {
+          alert('Error al registrar pago: ' + data.message);
+        }
+      } catch (err) {
+        console.error('Error registrando pago:', err);
+        alert('Error al registrar pago');
+      }
+    });
+
+    // Cargar matrículas al iniciar
+    cargarMatriculas();
+  </script>
+</body>
+</html>

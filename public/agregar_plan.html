@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avatar - Agregar Plan de Estudio</title>
+    <style>
+        /* Estilos consistentes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        nav a {
+            margin: 10px;
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #2e86de;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-submit {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-cancel {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-submit:hover {
+            background-color: #219653;
+        }
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agregar Nuevo Plan de Estudio</h1>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="usuarios.html">Usuarios</a>
+        <a href="estudiantes.html">Estudiantes</a>
+        <a href="profesores.html">Profesores</a>
+        <a href="materias.html">Materias</a>
+        <a href="planes.html">Planes de Estudio</a>
+        <a href="matricula.html">Matrícula</a>
+        <a href="pagos.html">Pagos</a>
+        <a href="configuracion.html">Configuración</a>
+    </nav>
+
+    <div class="form-container">
+        <form id="planForm">
+            <div class="form-group">
+                <label for="nombrePlan">Nombre del Plan:</label>
+                <input type="text" id="nombrePlan" name="nombrePlan" required>
+                <div id="nombrePlanError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="anioInicio">Año de Inicio:</label>
+                <input type="number" id="anioInicio" name="anioInicio" min="2000" max="2100" required>
+                <div id="anioInicioError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="cancelar()">Cancelar</button>
+                <button type="submit" class="btn btn-submit">Guardar Plan</button>
+            </div>
+            
+            <div id="message" class="success" style="display: none;"></div>
+        </form>
+    </div>
+
+    <script>
+        // Función para validar el formulario
+        function validarFormulario() {
+            let isValid = true;
+            
+            // Limpiar mensajes de error
+            document.getElementById('nombrePlanError').textContent = '';
+            document.getElementById('anioInicioError').textContent = '';
+            
+            // Validar nombre del plan
+            const nombrePlan = document.getElementById('nombrePlan').value.trim();
+            if (nombrePlan === '') {
+                document.getElementById('nombrePlanError').textContent = 'El nombre del plan es requerido';
+                isValid = false;
+            }
+            
+            // Validar año de inicio
+            const anioInicio = document.getElementById('anioInicio').value;
+            const anioActual = new Date().getFullYear();
+            if (anioInicio === '' || anioInicio < 2000 || anioInicio > 2100) {
+                document.getElementById('anioInicioError').textContent = 'Ingrese un año válido entre 2000 y 2100';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Función para mostrar mensaje
+        function mostrarMensaje(mensaje, esExito = true) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = mensaje;
+            messageDiv.className = esExito ? 'success' : 'error';
+            messageDiv.style.display = 'block';
+            
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Función para enviar el formulario
+        async function enviarFormulario(event) {
+            event.preventDefault();
+            
+            if (!validarFormulario()) {
+                return;
+            }
+            
+            const planData = {
+                NombrePlan: document.getElementById('nombrePlan').value.trim(),
+                AnioInicio: parseInt(document.getElementById('anioInicio').value),
+                Estado: parseInt(document.getElementById('estado').value)
+            };
+            
+            try {
+                // Obtener token de autenticación
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    mostrarMensaje('No está autenticado. Por favor, inicie sesión.', false);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    return;
+                }
+                
+                const response = await fetch('/api/planes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(planData)
+                });
+                
+                if (response.ok) {
+                    mostrarMensaje('Plan de estudio agregado correctamente');
+                    // Limpiar formulario
+                    document.getElementById('planForm').reset();
+                    // Redirigir después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'planes.html';
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    mostrarMensaje('Error al agregar plan: ' + (errorData.message || 'Intente nuevamente'), false);
+                }
+            } catch (error) {
+                console.error('Error al agregar plan:', error);
+                mostrarMensaje('Error de conexión. Intente nuevamente.', false);
+            }
+        }
+        
+        // Función para cancelar y volver a la lista de planes
+        function cancelar() {
+            if (confirm('¿Está seguro de que desea cancelar? Los datos no guardados se perderán.')) {
+                window.location.href = 'planes.html';
+            }
+        }
+        
+        // Verificar autenticación al cargar la página
+        function verificarAutenticacion() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No está autenticado. Será redirigido a la página de inicio de sesión.');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacion();
+            document.getElementById('planForm').addEventListener('submit', enviarFormulario);
+            
+            // Establecer año actual como valor por defecto
+            const anioActual = new Date().getFullYear();
+            document.getElementById('anioInicio').value = anioActual;
+        });
+    </script>
+</body>
+</html>

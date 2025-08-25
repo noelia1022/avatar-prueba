@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avatar - Gestión de Profesores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        nav a:hover {
+            color: #2e86de;
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: #2e86de;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46, 134, 222, 0.2);
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #2e86de;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1c6bc2;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+            margin-right: 15px;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        .logout-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-logout {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .user-info {
+            color: #444;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón de cerrar sesión -->
+    <div class="logout-container">
+        <span class="user-info" id="userName"></span>
+        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <h1 id="pageTitle">Agregar Nuevo Profesor</h1>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="usuarios.html">Usuarios</a>
+        <a href="estudiantes.html">Estudiantes</a>
+        <a href="materias.html">Materias</a>
+        <a href="planes.html">Planes de estudio</a>
+        <a href="matricula.html">Matrícula</a>
+        <a href="pagos.html">Pagos</a>
+        <a href="configuracion.html">Configuración</a>
+        <a href="profesores.html">Profesores</a>
+    </nav>
+
+    <div class="form-container">
+        <div id="successMessage" class="success-message">
+            Profesor guardado correctamente. Redirigiendo...
+        </div>
+        
+        <form id="profesorForm">
+            <input type="hidden" id="profesorId" value="">
+            
+            <div class="form-group">
+                <label for="nombre" class="required">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ingrese el nombre completo">
+                <div id="nombreError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="correo">Correo electrónico</label>
+                <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com">
+                <div id="correoError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="text" id="telefono" name="telefono" placeholder="Ingrese el número de teléfono">
+                <div id="telefonoError" class="error"></div>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="location.href='profesores.html'">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="submitButton">Guardar Profesor</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const profesorId = urlParams.get('id');
+        let isEditMode = false;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const form = document.getElementById('profesorForm');
+            const successMessage = document.getElementById('successMessage');
+            const pageTitle = document.getElementById('pageTitle');
+            const submitButton = document.getElementById('submitButton');
+            
+            // Verificar autenticación
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if(!token) {
+                alert('Debe iniciar sesión primero');
+                window.location.href = 'index.html';
+                return;
+            } else {
+                document.getElementById('userName').textContent = user.nombre;
+            }
+            
+            // Si hay un ID en la URL, estamos en modo edición
+            if (profesorId) {
+                isEditMode = true;
+                pageTitle.textContent = 'Editar Profesor';
+                submitButton.textContent = 'Actualizar Profesor';
+                
+                try {
+                    // Cargar datos del profesor
+                    const response = await fetch(`/api/profesores/${profesorId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al cargar datos del profesor');
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.profesor) {
+                        // Llenar el formulario con los datos existentes
+                        document.getElementById('profesorId').value = result.profesor.ProfesorID;
+                        document.getElementById('nombre').value = result.profesor.Nombre || '';
+                        document.getElementById('correo').value = result.profesor.Correo || '';
+                        document.getElementById('telefono').value = result.profesor.Telefono || '';
+                    } else {
+                        throw new Error(result.message || 'Error al obtener datos del profesor');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al cargar datos del profesor: ' + error.message);
+                    window.location.href = 'profesores.html';
+                }
+            }
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Limpiar mensajes de error
+                document.querySelectorAll('.error').forEach(el => el.textContent = '');
+                
+                // Obtener valores del formulario
+                const nombre = document.getElementById('nombre').value.trim();
+                const correo = document.getElementById('correo').value.trim();
+                const telefono = document.getElementById('telefono').value.trim();
+                
+                // Validaciones básicas
+                let isValid = true;
+                
+                if (!nombre) {
+                    document.getElementById('nombreError').textContent = 'El nombre es obligatorio';
+                    isValid = false;
+                }
+                
+                if (correo && !isValidEmail(correo)) {
+                    document.getElementById('correoError').textContent = 'Formato de correo inválido';
+                    isValid = false;
+                }
+                
+                if (telefono && !isValidPhone(telefono)) {
+                    document.getElementById('telefonoError').textContent = 'Formato de teléfono inválido';
+                    isValid = false;
+                }
+                
+                if (!isValid) return;
+                
+                try {
+                    // Determinar método HTTP y URL según el modo
+                    const method = isEditMode ? 'PUT' : 'POST';
+                    const url = isEditMode ? `/api/profesores/${profesorId}` : '/api/profesores';
+                    
+                    // Enviar datos al servidor
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            nombre: nombre,
+                            correo: correo || null,
+                            telefono: telefono || null
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        // Mostrar mensaje de éxito
+                        successMessage.style.display = 'block';
+                        form.reset();
+                        
+                        // Redirigir después de 2 segundos
+                        setTimeout(() => {
+                            window.location.href = 'profesores.html';
+                        }, 2000);
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error al guardar profesor:', error);
+                    alert('Error al conectar con el servidor. Verifique la consola para más detalles.');
+                }
+            });
+            
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            function isValidPhone(phone) {
+                const re = /^[0-9+\-\s()]{8,20}$/;
+                return re.test(phone);
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

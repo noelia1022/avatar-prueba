@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avatar - Materias</title>
+    <style>
+        /* Estilos consistentes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #2e86de;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        nav a:hover {
+            color: #2e86de;
+            background-color: #f8f9fa;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2e86de;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-deactivate {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-activate {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-add {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .btn-view {
+            background-color: #3498db;
+            color: white;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        label {
+            font-weight: bold;
+            color: #444;
+        }
+        .logout-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-logout {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .user-info {
+            color: #444;
+            font-weight: 500;
+        }
+        .status-active {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #2e86de;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+            }
+            .actions {
+                flex-direction: column;
+            }
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón de cerrar sesión -->
+    <div class="logout-container">
+        <span class="user-info" id="userName"></span>
+        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <h1>Gestión de Materias</h1>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="usuarios.html">Usuarios</a>
+        <a href="estudiantes.html">Estudiantes</a>
+        <a href="profesores.html">Profesores</a>
+        <a href="planes.html">Planes de estudio</a>
+        <a href="matricula.html">Matrícula</a>
+        <a href="pagos.html">Pagos</a>
+        <a href="configuracion.html">Configuración</a>
+    </nav>
+
+    <div class="filter-container">
+        <div class="filter-group">
+            <button class="btn btn-add" onclick="location.href='agregar_materia.html'">+ Agregar Materia</button>
+        </div>
+        <div class="filter-group">
+            <label for="planFilter">Filtrar por Plan:</label>
+            <select id="planFilter" onchange="filtrarMaterias()">
+                <option value="0">Todos los planes</option>
+                <!-- Opciones se cargarán dinámicamente -->
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="statusFilter">Estado:</label>
+            <select id="statusFilter" onchange="filtrarMaterias()">
+                <option value="all" selected>Todos</option>
+                <option value="active">Activas</option>
+                <option value="inactive">Inactivas</option>
+            </select>
+        </div>
+    </div>
+
+    <table id="materiasTable">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Créditos</th>
+                <th>Plan de Estudio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="6" class="loading" id="loadingText">Cargando materias...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Verificar autenticación
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if(!token) {
+            alert('Debe iniciar sesión primero');
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('userName').textContent = user.nombre;
+        }
+
+        let todasLasMaterias = [];
+        let planesEstudio = [];
+        
+        // Función para cargar los planes de estudio
+        async function cargarPlanes() {
+            try {
+                const response = await fetch('/api/planes', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar planes');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    planesEstudio = result.planes;
+                    const select = document.getElementById('planFilter');
+                    
+                    // Limpiar opciones existentes (excepto la primera)
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                    
+                    planesEstudio.forEach(plan => {
+                        const option = document.createElement('option');
+                        option.value = plan.PlanID;
+                        option.textContent = plan.NombrePlan;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar planes:', error);
+                alert('Error al cargar planes de estudio');
+            }
+        }
+        
+        // Función para cargar las materias desde la base de datos
+        async function cargarMaterias() {
+            try {
+                const response = await fetch('/api/materias', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar materias');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    todasLasMaterias = result.materias;
+                    filtrarMaterias();
+                } else {
+                    throw new Error(result.message || 'Error al obtener materias');
+                }
+            } catch (error) {
+                console.error('Error al cargar materias:', error);
+                document.getElementById('loadingText').textContent = 'Error al cargar materias: ' + error.message;
+                document.getElementById('loadingText').style.color = '#e74c3c';
+            }
+        }
+        
+        // Función para filtrar materias por plan de estudio y estado
+        function filtrarMaterias() {
+            const planID = document.getElementById('planFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let materiasFiltradas = todasLasMaterias;
+            
+            // Filtrar por plan
+            if (planID !== "0") {
+                materiasFiltradas = materiasFiltradas.filter(m => m.PlanID == planID);
+            }
+            
+            // Filtrar por estado (asumiendo que hay un campo Activo en la respuesta)
+            if (statusFilter !== "all") {
+                const estadoFiltro = statusFilter === "active";
+                materiasFiltradas = materiasFiltradas.filter(m => m.Activo === estadoFiltro);
+            }
+                
+            const tbody = document.querySelector('#materiasTable tbody');
+            tbody.innerHTML = '';
+            
+            if (materiasFiltradas.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="6" class="no-data">No se encontraron materias con los filtros seleccionados</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            materiasFiltradas.forEach(materia => {
+                const plan = planesEstudio.find(p => p.PlanID == materia.PlanID) || {};
+                const row = document.createElement('tr');
+                
+                // Determinar clase de estado (asumiendo que hay un campo Activo en la respuesta)
+                // Si no existe, todas se consideran activas
+                const isActive = materia.Activo !== undefined ? materia.Activo : true;
+                const statusClass = isActive ? 'status-active' : 'status-inactive';
+                const statusText = isActive ? 'Activa' : 'Inactiva';
+                
+                row.innerHTML = `
+                    <td>${materia.Codigo}</td>
+                    <td>${materia.Nombre}</td>
+                    <td>${materia.Creditos}</td>
+                    <td>${plan.NombrePlan || 'No asignado'}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                    <td class="actions">
+                       
+                        <button class="btn btn-edit" onclick="editarMateria('${materia.Codigo}')">Editar</button>
+                        ${isActive ? 
+                            `<button class="btn btn-deactivate" onclick="cambiarEstadoMateria('${materia.Codigo}', false)">Desactivar</button>` : 
+                            `<button class="btn btn-activate" onclick="cambiarEstadoMateria('${materia.Codigo}', true)">Activar</button>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+      
+        
+       function editarMateria(codigo) {
+       location.href = `agregar_materia.html?codigo=${codigo}`;
+  }
+        
+        // Función para cambiar el estado de la materia (activar/desactivar)
+        async function cambiarEstadoMateria(codigo, nuevoEstado) {
+            const accion = nuevoEstado ? "activar" : "desactivar";
+            
+            if (confirm(`¿Está seguro de ${accion} esta materia?`)) {
+                try {
+                    const response = await fetch(`/api/materias/${codigo}/estado`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ activo: nuevoEstado })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert(`Materia ${accion}ada correctamente`);
+                        cargarMaterias(); // Recargar la lista
+                    } else {
+                        alert(`Error al ${accion} materia: ` + result.message);
+                    }
+                } catch (error) {
+                    console.error(`Error al ${accion} materia:`, error);
+                    alert(`Error al ${accion} materia`);
+                }
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+        
+        // Cargar datos al iniciar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarPlanes();
+            cargarMaterias();
+        });
+    </script>
+</body>
+</html>
