@@ -1,380 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avatar - Estudiantes</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%);
-            margin: 0;
-            padding: 20px;
-            color: #2c3e50;
-            min-height: 100vh;
-        }
-        
-        h1 {
-            color: #1e3a8a;
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .logo-birrete {
-            font-size: 2.8rem;
-            color: #fbbf24;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-            animation: gentle-float 3s ease-in-out infinite;
-        }
-        
-        @keyframes gentle-float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        nav {
-            text-align: center;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(59, 130, 246, 0.1);
-        }
-        
-        nav a {
-            margin: 8px 15px;
-            text-decoration: none;
-            color: #64748b;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            display: inline-block;
-            font-size: 0.95em;
-        }
-        
-        nav a:hover {
-            color: #1e3a8a;
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .table-container {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.08);
-            border: 2px solid rgba(59, 130, 246, 0.1);
-            margin-top: 20px;
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.05);
-        }
-        
-        th, td {
-            padding: 15px 20px;
-            text-align: left;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
-        }
-        
-        th {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 0.95em;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-        }
-        
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-        
-        tbody tr:hover {
-            background-color: rgba(59, 130, 246, 0.05);
-            transform: scale(1.01);
-        }
-        
-        tbody tr:nth-child(even) {
-            background-color: rgba(248, 250, 252, 0.5);
-        }
-        
-        .actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            font-family: inherit;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-edit {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-        
-        .btn-edit:hover {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-        }
-        
-        .btn-delete {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-        
-        .btn-delete:hover {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-        }
-        
-        .btn-add {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 12px 24px;
-            margin-bottom: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-            font-size: 1em;
-        }
-        
-        .btn-add:hover {
-            background: linear-gradient(135deg, #059669, #047857);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
-        }
-        
-        .btn-view {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-        
-        .btn-view:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        .add-button-container {
-            text-align: right;
-            margin-bottom: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            nav {
-                padding: 15px;
-            }
-            
-            nav a {
-                margin: 5px;
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
-            
-            .table-container {
-                padding: 20px;
-                overflow-x: auto;
-            }
-            
-            table {
-                min-width: 800px;
-            }
-            
-            th, td {
-                padding: 12px 15px;
-                font-size: 0.9em;
-            }
-            
-            .actions {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Avatar - Estudiantes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg,#f8f9fa 0%,#e3f2fd 50%,#ffffff 100%);
+      margin:0; padding:20px; color:#2c3e50; min-height:100vh;
+    }
+    h1 { color:#1e3a8a; text-align:center; font-size:2.5rem; margin-bottom:30px; display:flex; justify-content:center; align-items:center; gap:15px; }
+    .logo-birrete { font-size:2.5rem; color:#fbbf24; animation:float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)} }
+    nav { text-align:center; margin-bottom:30px; padding:15px; background:white; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); }
+    nav a { margin:0 10px; text-decoration:none; color:#1e3a8a; font-weight:500; }
+    nav a:hover { color:#2563eb; }
+    .table-container { background:white; padding:20px; border-radius:15px; box-shadow:0 6px 20px rgba(0,0,0,0.08); overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th,td { padding:12px 15px; text-align:left; border-bottom:1px solid #eee; }
+    th { background:#1e3a8a; color:white; font-size:0.9em; text-transform:uppercase; }
+    tr:hover { background:#f9fafb; }
+    .actions { display:flex; gap:5px; }
+    .btn { padding:6px 12px; border:none; border-radius:8px; cursor:pointer; font-size:0.85em; font-weight:600; }
+    .btn-add { background:#10b981; color:white; margin-bottom:15px; }
+    .btn-add:hover { background:#059669; }
+    .btn-edit { background:#f59e0b; color:white; }
+    .btn-edit:hover { background:#d97706; }
+    .btn-delete { background:#ef4444; color:white; }
+    .btn-delete:hover { background:#dc2626; }
+  </style>
 </head>
 <body>
-    <h1>
-        <span class="logo-birrete">🎓</span>
-        Gestión de Estudiantes
-    </h1>
-    
-    <nav>
-        <a href="index.html">Inicio</a>
-        <a href="usuarios.html">Usuarios</a>
-        <a href="profesores.html">Profesores</a>
-        <a href="materias.html">Materias</a>
-        <a href="planes.html">Planes de estudio</a>
-        <a href="matricula.html">Matrícula</a>
-        <a href="pagos.html">Pagos</a>
-        <a href="configuracion.html">Configuración</a>
-    </nav>
+  <h1><span class="logo-birrete">🎓</span> Gestión de Estudiantes</h1>
+  
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="usuarios.html">Usuarios</a>
+    <a href="profesores.html">Profesores</a>
+    <a href="materias.html">Materias</a>
+    <a href="planes.html">Planes</a>
+    <a href="matricula.html">Matrícula</a>
+    <a href="pagos.html">Pagos</a>
+    <a href="configuracion.html">Configuración</a>
+  </nav>
 
-    <div class="table-container">
-        <div class="add-button-container">
-            <button class="btn btn-add" onclick="location.href='agregar_estudiante.html'">
-                <i class="fas fa-plus"></i> Agregar Estudiante
-            </button>
-        </div>
+  <div class="table-container">
+    <button class="btn btn-add" onclick="location.href='agregar_estudiante.html'">
+      <i class="fas fa-plus"></i> Agregar Estudiante
+    </button>
 
-        <table id="estudiantesTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cédula</th>
-                    <th>Nombre</th>
-                    <th>Fecha Nacimiento</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos se cargarán dinámicamente con JavaScript -->
-            </tbody>
-        </table>
-    </div>
+    <table id="estudiantesTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Fecha Nacimiento</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-    <script>
-        // Obtener token de localStorage
-        const token = localStorage.getItem('token');
-        
-        if(!token) {
-            alert('Debe iniciar sesión primero');
-            window.location.href = 'index.html';
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Debe iniciar sesión primero');
+      window.location.href = 'index.html';
+    }
+
+    async function cargarEstudiantes() {
+      try {
+        const res = await fetch('/api/estudiantes', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'Error al cargar estudiantes');
         }
 
-        // Función para cargar los estudiantes desde la API
-        async function cargarEstudiantes() {
-            try {
-                const response = await fetch('/api/estudiantes', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if(!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Error al cargar estudiantes');
-                }
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.message || 'Error en la respuesta del servidor');
-                }
-                
-                const tbody = document.querySelector('#estudiantesTable tbody');
-                tbody.innerHTML = '';
-                
-                result.estudiantes.forEach(estudiante => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${estudiante.EstudianteID}</td>
-                        <td>${estudiante.Cedula}</td>
-                        <td>${estudiante.Nombre}</td>
-                        <td>${estudiante.FechaNacimiento || '-'}</td>
-                        <td>${estudiante.Correo || '-'}</td>
-                        <td>${estudiante.Telefono || '-'}</td>
-                        <td class="actions">
-                            <button class="btn btn-edit" onclick="editarEstudiante(${estudiante.EstudianteID})">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn btn-delete" onclick="eliminarEstudiante(${estudiante.EstudianteID}, '${estudiante.Nombre}')">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error al cargar estudiantes:', error);
-                alert('Error al cargar estudiantes: ' + error.message);
-            }
+        const tbody = document.querySelector('#estudiantesTable tbody');
+        tbody.innerHTML = '';
+        data.estudiantes.forEach(est => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${est.EstudianteID}</td>
+            <td>${est.Cedula}</td>
+            <td>${est.Nombre}</td>
+            <td>${est.FechaNacimiento || '-'}</td>
+            <td>${est.Correo || '-'}</td>
+            <td>${est.Telefono || '-'}</td>
+            <td class="actions">
+              <button class="btn btn-edit" onclick="editarEstudiante(${est.EstudianteID})"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-delete" onclick="eliminarEstudiante(${est.EstudianteID}, '${est.Nombre}')"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function editarEstudiante(id) {
+      window.location.href = `agregar_estudiante.html?editar=${id}`;
+    }
+
+    async function eliminarEstudiante(id, nombre) {
+      if (!confirm(`¿Está seguro de desactivar al estudiante "${nombre}"?`)) return;
+      try {
+        const res = await fetch(`/api/estudiantes/${id}`, {
+          method:'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'No se pudo eliminar');
         }
-        
-        // Función para editar estudiante
-        function editarEstudiante(id) {
-            location.href = `agregar_estudiante.html?editar=${id}`;
-        }
-        
-        // Función para eliminar estudiante (marcar como inactivo)
-        async function eliminarEstudiante(id, nombre) {
-            if (confirm(`¿Está seguro de marcar como inactivo a "${nombre}"?\n\nEl estudiante no se eliminará permanentemente.`)) {
-                try {
-                    const response = await fetch(`/api/estudiantes/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        alert('Estudiante marcado como inactivo correctamente');
-                        cargarEstudiantes();
-                    } else {
-                        throw new Error(result.message || 'Error al marcar como inactivo');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error: ' + error.message);
-                }
-            }
-        }
-        
-        // Cargar estudiantes al cargar la página
-        document.addEventListener('DOMContentLoaded', cargarEstudiantes);
-    </script>
+        alert('Estudiante marcado como inactivo');
+        cargarEstudiantes();
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', cargarEstudiantes);
+  </script>
 </body>
 </html>

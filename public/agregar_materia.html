@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Materia</title>
+    <title>Sistema Avatar - Gestión de Materias</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,6 +21,7 @@
         h1 {
             color: #2e86de;
             text-align: center;
+            margin-bottom: 20px;
         }
         .form-group {
             margin-bottom: 15px;
@@ -98,7 +99,6 @@
     </div>
 
     <script>
-        let planes = [];
         let esEdicion = false;
         let codigoMateriaOriginal = '';
 
@@ -108,83 +108,73 @@
             return urlParams.get(nombre);
         }
 
+        // Cargar lista de planes
         async function cargarPlanes() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('/api/planes', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const res = await fetch('/api/planes', {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await response.json();
-                
+                const data = await res.json();
+
                 if (data.success) {
-                    planes = data.planes;
                     const select = document.getElementById('plan');
-                    
-                    // Limpiar opciones excepto la primera
-                    while (select.options.length > 1) {
-                        select.remove(1);
-                    }
-                    
-                    planes.forEach(plan => {
+                    data.planes.forEach(plan => {
                         const option = document.createElement('option');
                         option.value = plan.PlanID;
                         option.textContent = plan.NombrePlan;
                         select.appendChild(option);
                     });
+                } else {
+                    alert('Error al cargar planes: ' + data.message);
                 }
-            } catch (error) {
-                console.error('Error al cargar planes:', error);
-                alert('Error al cargar planes de estudio');
+            } catch (err) {
+                console.error(err);
+                alert('Error al cargar planes');
             }
         }
 
+        // Cargar datos de la materia si es edición
         async function cargarMateria(codigo) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`/api/materias/${codigo}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const res = await fetch(`/api/materias/${codigo}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
+                const data = await res.json();
 
-                const data = await response.json();
-                
                 if (data.success) {
-                    const materia = data.materia;
-                    document.getElementById('codigo').value = materia.Codigo;
-                    document.getElementById('nombre').value = materia.Nombre;
-                    document.getElementById('creditos').value = materia.Creditos;
-                    document.getElementById('plan').value = materia.PlanID || '';
-                    
-                    // Hacer el campo código de solo lectura en modo edición
-                    document.getElementById('codigo').classList.add('codigo-readonly');
+                    const m = data.materia;
+                    document.getElementById('codigo').value = m.Codigo;
+                    document.getElementById('nombre').value = m.Nombre;
+                    document.getElementById('creditos').value = m.Creditos;
+                    document.getElementById('plan').value = m.PlanID || '';
+
+                    // Código solo lectura
                     document.getElementById('codigo').readOnly = true;
-                    
-                    // Mostrar botón de eliminar
+                    document.getElementById('codigo').classList.add('codigo-readonly');
+
                     document.getElementById('deleteButton').style.display = 'inline-block';
-                    
-                    return true;
                 } else {
-                    alert('Error al cargar la materia: ' + data.message);
-                    return false;
+                    alert('No se pudo cargar la materia');
+                    location.href = 'materias.html';
                 }
-            } catch (error) {
-                console.error('Error al cargar materia:', error);
+            } catch (err) {
+                console.error(err);
                 alert('Error al cargar la materia');
-                return false;
+                location.href = 'materias.html';
             }
         }
 
+        // Guardar o actualizar materia
         async function guardarMateria(materia) {
             try {
                 const token = localStorage.getItem('token');
                 const url = esEdicion ? `/api/materias/${codigoMateriaOriginal}` : '/api/materias';
                 const method = esEdicion ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
+
+                const res = await fetch(url, {
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -192,79 +182,78 @@
                     body: JSON.stringify(materia)
                 });
 
-                const data = await response.json();
-                
-                if (data.success) {
+                const data = await res.json();
+
+                if (res.ok && data.success) {
                     alert(esEdicion ? 'Materia actualizada correctamente' : 'Materia creada correctamente');
                     location.href = 'materias.html';
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Error: ' + (data.message || 'No se pudo guardar'));
                 }
-            } catch (error) {
-                console.error('Error al guardar materia:', error);
+            } catch (err) {
+                console.error(err);
                 alert('Error al guardar la materia');
             }
         }
 
+        // Eliminar materia
         async function eliminarMateria() {
-            if (confirm('¿Está seguro de eliminar esta materia?')) {
+            if (confirm('¿Seguro que desea eliminar esta materia?')) {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/materias/${codigoMateriaOriginal}`, {
+                    const res = await fetch(`/api/materias/${codigoMateriaOriginal}`, {
                         method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
+                    const data = await res.json();
 
-                    const data = await response.json();
-                    
-                    if (data.success) {
+                    if (res.ok && data.success) {
                         alert('Materia eliminada correctamente');
                         location.href = 'materias.html';
                     } else {
-                        alert('Error al eliminar materia: ' + data.message);
+                        alert('Error: ' + (data.message || 'No se pudo eliminar'));
                     }
-                } catch (error) {
-                    console.error('Error al eliminar materia:', error);
+                } catch (err) {
+                    console.error(err);
                     alert('Error al eliminar la materia');
                 }
             }
         }
 
-        // Verificar autenticación y cargar datos
+        // Inicializar
         document.addEventListener('DOMContentLoaded', async () => {
             if (!localStorage.getItem('token')) {
+                alert('Debe iniciar sesión primero');
                 location.href = 'index.html';
                 return;
             }
-            
+
             await cargarPlanes();
-            
-            // Verificar si estamos en modo edición
+
             const codigo = obtenerParametroURL('codigo');
             if (codigo) {
                 esEdicion = true;
                 codigoMateriaOriginal = codigo;
                 document.getElementById('formTitle').textContent = 'Editar Materia';
                 document.getElementById('submitButton').textContent = 'Actualizar';
-                
-                const cargaExitosa = await cargarMateria(codigo);
-                if (!cargaExitosa) {
-                    location.href = 'materias.html';
-                }
+                await cargarMateria(codigo);
             }
         });
 
         document.getElementById('materiaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const materia = {
-                Codigo: document.getElementById('codigo').value,
-                Nombre: document.getElementById('nombre').value,
+                Codigo: document.getElementById('codigo').value.trim(),
+                Nombre: document.getElementById('nombre').value.trim(),
                 Creditos: parseInt(document.getElementById('creditos').value),
                 PlanID: document.getElementById('plan').value || null
             };
+
+            if (!materia.Codigo || !materia.Nombre || !materia.Creditos) {
+                alert('Complete todos los campos obligatorios');
+                return;
+            }
 
             await guardarMateria(materia);
         });

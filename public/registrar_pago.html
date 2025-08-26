@@ -59,7 +59,7 @@
     <input type="text" id="monto" readonly required value="0">
 
     <label for="fechaPago">Fecha de Pago:</label>
-    <input type="date" id="fechaPago" required value="<?php echo date('Y-m-d'); ?>">
+    <input type="date" id="fechaPago" required>
 
     <label for="metodo">Método de Pago:</label>
     <select id="metodo" required>
@@ -103,7 +103,6 @@
           const opt = document.createElement('option');
           opt.value = m.MatriculaID;
           opt.textContent = `${m.Estudiante} - ${m.Periodo} ${m.Anio}`;
-          // Guardar información adicional en el elemento option
           opt.dataset.estudiante = m.Estudiante;
           opt.dataset.periodo = `${m.Periodo} ${m.Anio}`;
           matriculaSelect.appendChild(opt);
@@ -114,7 +113,7 @@
       }
     }
 
-    // Calcular monto según materias y mostrar información
+    // Calcular monto según materias
     async function calcularMonto(matriculaID) {
       if (!matriculaID) {
         infoMatricula.style.display = 'none';
@@ -123,12 +122,10 @@
       }
       
       try {
-        // Mostrar información básica de la matrícula seleccionada
         const selectedOption = matriculaSelect.options[matriculaSelect.selectedIndex];
         estudianteInfo.textContent = selectedOption.dataset.estudiante || '';
         periodoInfo.textContent = selectedOption.dataset.periodo || '';
         
-        // Obtener detalles de las materias
         const res = await fetch(`/api/matriculas/${matriculaID}/materias`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -136,9 +133,7 @@
         
         if (data.success && data.materias.length > 0) {
           let total = data.materias.reduce((sum, m) => sum + (m.Costo || 0), 0);
-          montoInput.value = total.toLocaleString('es-CR'); // mostrar con formato
-          
-          // Mostrar información de materias
+          montoInput.value = total.toLocaleString('es-CR');
           materiasInfo.textContent = data.materias.map(m => m.Nombre).join(', ');
           infoMatricula.style.display = 'block';
         } else {
@@ -153,7 +148,7 @@
       }
     }
 
-    // Establecer fecha actual por defecto
+    // Poner fecha actual por defecto
     document.getElementById('fechaPago').valueAsDate = new Date();
 
     matriculaSelect.addEventListener('change', e => calcularMonto(e.target.value));
@@ -167,7 +162,7 @@
         return;
       }
 
-      const montoLimpio = montoInput.value.replace(/[^\d]/g, ''); // quitar formato
+      const montoLimpio = montoInput.value.replace(/[^\d]/g, '');
 
       const pago = {
         MatriculaID: matriculaSelect.value,
@@ -199,7 +194,7 @@
       }
     });
 
-    // Cargar matrículas al iniciar
+    // Inicializar
     cargarMatriculas();
   </script>
 </body>

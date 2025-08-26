@@ -1,240 +1,161 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avatar - Profesores</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            padding: 20px;
-        }
-        h1 {
-            color: #2e86de;
-            text-align: center;
-        }
-        nav {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        nav a {
-            margin: 10px;
-            text-decoration: none;
-            color: #444;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #2e86de;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #2e86de;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .actions {
-            display: flex;
-            gap: 5px;
-        }
-        .btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .btn-edit {
-            background-color: #f39c12;
-            color: white;
-        }
-        .btn-delete {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .btn-add {
-            background-color: #27ae60;
-            color: white;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-        }
-        .logout-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .btn-logout {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .user-info {
-            color: #444;
-            font-weight: 500;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Avatar - Profesores</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f0f2f5; padding:20px; }
+    h1 { color:#2e86de; text-align:center; }
+    nav { text-align:center; margin-bottom:30px; }
+    nav a { margin:10px; text-decoration:none; color:#444; font-weight:bold; }
+    nav a:hover { color:#2e86de; }
+    table { width:100%; border-collapse:collapse; margin-top:20px; background:white; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+    th { background:#2e86de; color:white; }
+    tr:nth-child(even) { background:#f9f9f9; }
+    .actions { display:flex; gap:5px; }
+    .btn { padding:5px 10px; border:none; border-radius:3px; cursor:pointer; }
+    .btn-edit { background:#f39c12; color:white; }
+    .btn-delete { background:#e74c3c; color:white; }
+    .btn-add { background:#27ae60; color:white; padding:10px 15px; margin-bottom:20px; }
+    .logout-container {
+      position: fixed; top: 20px; right: 20px;
+      background: white; padding: 8px 15px; border-radius: 5px;
+      display: flex; gap: 10px; align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-logout { background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; font-weight:bold; }
+    .user-info { color:#444; font-weight:500; }
+  </style>
 </head>
 <body>
-    <!-- Botón de cerrar sesión -->
-    <div class="logout-container">
-        <span class="user-info" id="userName"></span>
-        <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
-    </div>
+  <!-- Botón de cerrar sesión -->
+  <div class="logout-container">
+    <span class="user-info" id="userName"></span>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
 
-    <h1>Gestión de Profesores</h1>
-    
-    <nav>
-        <a href="index.html">Inicio</a>
-        <a href="usuarios.html">Usuarios</a>
-        <a href="estudiantes.html">Estudiantes</a>
-        <a href="materias.html">Materias</a>
-        <a href="planes.html">Planes de estudio</a>
-        <a href="matricula.html">Matrícula</a>
-        <a href="pagos.html">Pagos</a>
-        <a href="configuracion.html">Configuración</a>
-    </nav>
+  <h1>Gestión de Profesores</h1>
 
-    <div style="text-align: right;">
-        <button class="btn btn-add" onclick="location.href='agregar_profesor.html'">+ Agregar Profesor</button>
-    </div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="usuarios.html">Usuarios</a>
+    <a href="estudiantes.html">Estudiantes</a>
+    <a href="materias.html">Materias</a>
+    <a href="planes.html">Planes de estudio</a>
+    <a href="matricula.html">Matrícula</a>
+    <a href="pagos.html">Pagos</a>
+    <a href="configuracion.html">Configuración</a>
+  </nav>
 
-    <table id="profesoresTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Los datos se cargarán dinámicamente con JavaScript -->
-        </tbody>
-    </table>
+  <div style="text-align:right;">
+    <button class="btn btn-add" onclick="location.href='agregar_profesor.html'">+ Agregar Profesor</button>
+  </div>
 
-    <script>
-        // Obtener token de localStorage
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user'));
-        
-        if(!token) {
-            alert('Debe iniciar sesión primero');
-            window.location.href = 'index.html';
-        } else {
-            document.getElementById('userName').textContent = user.nombre;
+  <table id="profesoresTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">Cargando profesores...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) {
+      alert('Debe iniciar sesión primero');
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('userName').textContent = user?.nombre || 'Usuario';
+    }
+
+    // ==== Cargar profesores desde API ====
+    async function cargarProfesores() {
+      try {
+        const res = await fetch('/api/profesores', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          alert('Sesión expirada. Por favor, inicie sesión nuevamente.');
+          logout();
+          return;
         }
 
-        // Función para cargar los profesores desde la API
-        async function cargarProfesores() {
-            try {
-                const response = await fetch('/api/profesores', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if(!response.ok) {
-                    if (response.status === 401) {
-                        alert('Sesión expirada. Por favor, inicie sesión nuevamente.');
-                        logout();
-                        return;
-                    }
-                    const error = await response.json();
-                    throw new Error(error.message || 'Error al cargar profesores');
-                }
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.message || 'Error en la respuesta del servidor');
-                }
-                
-                const tbody = document.querySelector('#profesoresTable tbody');
-                tbody.innerHTML = '';
-                
-                result.profesores.forEach(profesor => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${profesor.ProfesorID}</td>
-                        <td>${profesor.Nombre}</td>
-                        <td>${profesor.Correo || '-'}</td>
-                        <td>${profesor.Telefono || '-'}</td>
-                        <td class="actions">
-                            <!-- En la tabla de profesores, cambiar la línea del botón Editar -->
-                            <button class="btn btn-edit" onclick="location.href='agregar_profesor.html?id=${profesor.ProfesorID}'">Editar</button>
-                            <button class="btn btn-delete" onclick="eliminarProfesor(${profesor.ProfesorID}, '${profesor.Nombre}')">Eliminar</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error al cargar profesores:', error);
-                alert('Error al cargar profesores: ' + error.message);
-            }
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'Error al cargar profesores');
         }
-        
-        // Función para editar profesor
-        //function editarProfesor(id) {
-         //   location.href = `profesores_editar.html?id=${id}`;
-        //}
-        
-        // Función para eliminar profesor
-        async function eliminarProfesor(id, nombre) {
-            if (confirm(`¿Está seguro de eliminar al profesor "${nombre}"?\n\nEsta acción no se puede deshacer.`)) {
-                try {
-                    const response = await fetch(`/api/profesores/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        alert('Profesor eliminado correctamente');
-                        cargarProfesores();
-                    } else {
-                        throw new Error(result.message || 'Error al eliminar profesor');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error: ' + error.message);
-                }
-            }
+
+        const tbody = document.querySelector('#profesoresTable tbody');
+        tbody.innerHTML = '';
+
+        if (data.profesores.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5">No hay profesores registrados</td></tr>';
+          return;
         }
-        
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
+
+        data.profesores.forEach(prof => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${prof.ProfesorID}</td>
+            <td>${prof.Nombre}</td>
+            <td>${prof.Correo || '-'}</td>
+            <td>${prof.Telefono || '-'}</td>
+            <td class="actions">
+              <button class="btn btn-edit" onclick="location.href='agregar_profesor.html?id=${prof.ProfesorID}'">Editar</button>
+              <button class="btn btn-delete" onclick="eliminarProfesor(${prof.ProfesorID}, '${prof.Nombre}')">Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error:', err);
+        alert('Error al cargar profesores: ' + err.message);
+      }
+    }
+
+    // ==== Eliminar profesor ====
+    async function eliminarProfesor(id, nombre) {
+      if (!confirm(`¿Está seguro de eliminar al profesor "${nombre}"?`)) return;
+      try {
+        const res = await fetch(`/api/profesores/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'Error al eliminar profesor');
         }
-        
-        // Cargar profesores al cargar la página
-        document.addEventListener('DOMContentLoaded', cargarProfesores);
-    </script>
+
+        alert('Profesor eliminado correctamente');
+        cargarProfesores();
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    // ==== Logout ====
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    // ==== Init ====
+    document.addEventListener('DOMContentLoaded', cargarProfesores);
+  </script>
 </body>
 </html>

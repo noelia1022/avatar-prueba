@@ -64,9 +64,6 @@
             font-size: 14px;
             margin-top: 5px;
         }
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -124,25 +121,24 @@
             cargarDatosEstudiante(editarId);
         }
 
-        // Cargar datos del estudiante para edición
+        // Cargar datos del estudiante
         async function cargarDatosEstudiante(id) {
             try {
                 const response = await fetch(`/api/estudiantes/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
                 if(!response.ok) throw new Error('Error al cargar estudiante');
                 
                 const { estudiante } = await response.json();
-                
                 if (!estudiante) throw new Error('Estudiante no encontrado');
                 
-                // Llenar formulario con datos existentes
+                // Llenar formulario
                 document.getElementById('cedula').value = estudiante.Cedula || '';
                 document.getElementById('nombre').value = estudiante.Nombre || '';
-                document.getElementById('fechaNacimiento').value = estudiante.FechaNacimiento || '';
+                document.getElementById('fechaNacimiento').value = estudiante.FechaNacimiento 
+                    ? estudiante.FechaNacimiento.split('T')[0] 
+                    : '';
                 document.getElementById('correo').value = estudiante.Correo || '';
                 document.getElementById('telefono').value = estudiante.Telefono || '';
                 
@@ -155,7 +151,7 @@
 
         // Validar cédula única (solo en modo creación)
         document.getElementById('cedula').addEventListener('blur', async function() {
-            if (editarId) return; // No validar en edición
+            if (editarId) return; 
             
             const cedula = this.value.trim();
             const errorDiv = document.getElementById('cedulaError');
@@ -163,20 +159,14 @@
             if (cedula) {
                 try {
                     const response = await fetch(`/api/estudiantes/verificar-cedula?cedula=${encodeURIComponent(cedula)}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
                     
                     if(!response.ok) throw new Error('Error al verificar cédula');
                     
                     const result = await response.json();
+                    errorDiv.textContent = result.existe ? 'Esta cédula ya está registrada' : '';
                     
-                    if (result.existe) {
-                        errorDiv.textContent = 'Esta cédula ya está registrada';
-                    } else {
-                        errorDiv.textContent = '';
-                    }
                 } catch (error) {
                     console.error('Error al verificar cédula:', error);
                     errorDiv.textContent = 'Error al verificar cédula';
@@ -195,23 +185,19 @@
             }
             
             const formData = {
-                cedula: document.getElementById('cedula').value.trim(),
-                nombre: document.getElementById('nombre').value.trim(),
-                fechaNacimiento: document.getElementById('fechaNacimiento').value,
-                correo: document.getElementById('correo').value.trim(),
-                telefono: document.getElementById('telefono').value.trim()
+                Cedula: document.getElementById('cedula').value.trim(),
+                Nombre: document.getElementById('nombre').value.trim(),
+                FechaNacimiento: document.getElementById('fechaNacimiento').value || null,
+                Correo: document.getElementById('correo').value.trim() || null,
+                Telefono: document.getElementById('telefono').value.trim() || null
             };
             
             try {
                 const url = editarId ? `/api/estudiantes/${editarId}` : '/api/estudiantes';
                 const method = editarId ? 'PUT' : 'POST';
                 
-                console.log('Enviando datos:', formData);
-                console.log('URL:', url);
-                console.log('Método:', method);
-                
                 const response = await fetch(url, {
-                    method: method,
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -220,9 +206,7 @@
                 });
                 
                 const result = await response.json();
-                console.log('Respuesta del servidor:', result);
-                
-                if (response.ok) {
+                if (response.ok && result.success) {
                     alert(editarId ? 'Estudiante actualizado correctamente' : 'Estudiante creado correctamente');
                     window.location.href = 'estudiantes.html';
                 } else {

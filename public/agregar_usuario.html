@@ -1,278 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Usuario - Sistema Avatar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2e86de;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .btn-primary {
-            background-color: #2e86de;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #95a5a6;
-            color: white;
-        }
-        .btn:hover {
-            opacity: 0.9;
-        }
-        .error {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Usuario - Sistema Avatar</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f0f2f5; padding:20px; }
+    .container {
+      max-width:600px; margin:auto; background:#fff; padding:30px; border-radius:10px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 { color:#2e86de; text-align:center; margin-bottom:25px; }
+    .form-group { margin-bottom:18px; }
+    label { display:block; margin-bottom:5px; font-weight:bold; color:#333; }
+    input,select {
+      width:100%; padding:10px; border:1px solid #ddd; border-radius:5px; font-size:15px;
+    }
+    .btn { padding:10px 18px; border:none; border-radius:5px; cursor:pointer; font-size:15px; margin:5px; }
+    .btn-primary { background:#2e86de; color:#fff; }
+    .btn-secondary { background:#95a5a6; color:#fff; }
+    .btn:hover { opacity:0.9; }
+    .error { color:#e74c3c; font-size:14px; margin-top:5px; display:none; }
+    .hidden { display:none; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="formTitle">Agregar Nuevo Usuario</h1>
-        
-        <form id="usuarioForm">
-            <div class="form-group">
-                <label for="nombre">Nombre Completo:</label>
-                <input type="text" id="nombre" name="NombreCompleto" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="correo">Correo Electrónico:</label>
-                <input type="email" id="correo" name="Correo" required>
-            </div>
-            
-            <div class="form-group" id="contrasenaGroup">
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" name="Contrasena">
-            </div>
-            
-            <div class="form-group" id="confirmarGroup">
-                <label for="confirmar">Confirmar Contraseña:</label>
-                <input type="password" id="confirmar" name="ConfirmarContrasena">
-                <div id="passwordError" class="error"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="rol">Rol:</label>
-                <select id="rol" name="RolID" required>
-                    <option value="">Seleccionar rol</option>
-                    <!-- Se cargará dinámicamente -->
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="estado">Estado:</label>
-                <select id="estado" name="Estado">
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
-                </select>
-            </div>
-            
-            <div style="text-align: center;">
-                <button type="submit" id="submitButton" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="cancelar()">Cancelar</button>
-            </div>
-        </form>
-    </div>
+  <div class="container">
+    <h1 id="formTitle">Agregar Nuevo Usuario</h1>
 
-    <script>
-        const token = localStorage.getItem('token');
-        const urlParams = new URLSearchParams(window.location.search);
-        const editarId = urlParams.get('editar');
-        
-        if(!token) {
-            alert('Debe iniciar sesión primero');
-            window.location.href = 'index.html';
-        }
+    <form id="usuarioForm">
+      <div class="form-group">
+        <label for="nombre">Nombre Completo:</label>
+        <input type="text" id="nombre" name="NombreCompleto" required>
+      </div>
 
-        // Cargar roles
-        async function cargarRoles() {
-            try {
-                const response = await fetch('/api/roles', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if(!response.ok) throw new Error('Error al cargar roles');
-                
-                const { roles } = await response.json();
-                const select = document.getElementById('rol');
-                
-                roles.forEach(rol => {
-                    const option = document.createElement('option');
-                    option.value = rol.RolID;
-                    option.textContent = rol.NombreRol;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar roles: ' + error.message);
-            }
-        }
+      <div class="form-group">
+        <label for="correo">Correo Electrónico:</label>
+        <input type="email" id="correo" name="Correo" required>
+      </div>
 
-        // Cargar datos del usuario para edición
-        async function cargarDatosUsuario(id) {
-            try {
-                const response = await fetch('/api/usuarios', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if(!response.ok) throw new Error('Error al cargar usuarios');
-                
-                const { usuarios } = await response.json();
-                const usuario = usuarios.find(u => u.UsuarioID == id);
-                
-                if (!usuario) throw new Error('Usuario no encontrado');
-                
-                // Llenar formulario con datos existentes
-                document.getElementById('nombre').value = usuario.NombreCompleto;
-                document.getElementById('correo').value = usuario.Correo;
-                document.getElementById('rol').value = usuario.RolID;
-                document.getElementById('estado').value = usuario.Estado ? '1' : '0';
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar usuario: ' + error.message);
-                window.location.href = 'usuarios.html';
-            }
-        }
+      <div class="form-group" id="contrasenaGroup">
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="Contrasena">
+      </div>
 
-        // Configurar modo edición
-        function configurarModoEdicion() {
-            if (editarId) {
-                document.getElementById('formTitle').textContent = 'Editar Usuario';
-                document.getElementById('submitButton').textContent = 'Actualizar';
-                
-                // Ocultar campos de contraseña en edición
-                document.getElementById('contrasenaGroup').classList.add('hidden');
-                document.getElementById('confirmarGroup').classList.add('hidden');
-                
-                // Cargar datos del usuario
-                cargarDatosUsuario(editarId);
-            }
-        }
+      <div class="form-group" id="confirmarGroup">
+        <label for="confirmar">Confirmar Contraseña:</label>
+        <input type="password" id="confirmar" name="ConfirmarContrasena">
+        <div id="passwordError" class="error"></div>
+      </div>
 
-        // Validar y enviar formulario
-        document.getElementById('usuarioForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const errorDiv = document.getElementById('passwordError');
-            errorDiv.style.display = 'none';
-            
-            const formData = new FormData(this);
-            const data = {
-                NombreCompleto: formData.get('NombreCompleto'),
-                Correo: formData.get('Correo'),
-                RolID: parseInt(formData.get('RolID')),
-                Estado: parseInt(formData.get('Estado'))
-            };
-            
-            // Validación para modo creación
-            if (!editarId) {
-                const contrasena = document.getElementById('contrasena').value;
-                const confirmar = document.getElementById('confirmar').value;
-                
-                if (!contrasena || !confirmar) {
-                    errorDiv.textContent = 'Las contraseñas son requeridas';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (contrasena !== confirmar) {
-                    errorDiv.textContent = 'Las contraseñas no coinciden';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                data.Contrasena = contrasena;
-            }
-            
-            try {
-                const url = editarId ? `/api/usuarios/${editarId}` : '/api/usuarios';
-                const method = editarId ? 'PUT' : 'POST';
-                
-                console.log('Enviando datos:', data);
-                console.log('URL:', url);
-                console.log('Método:', method);
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                console.log('Respuesta del servidor:', result);
-                
-                if (response.ok) {
-                    alert(editarId ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente');
-                    window.location.href = 'usuarios.html';
-                } else {
-                    throw new Error(result.message || 'Error al procesar la solicitud');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            }
+      <div class="form-group">
+        <label for="rol">Rol:</label>
+        <select id="rol" name="RolID" required>
+          <option value="">Seleccionar rol</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="estado">Estado:</label>
+        <select id="estado" name="Estado">
+          <option value="1">Activo</option>
+          <option value="0">Inactivo</option>
+        </select>
+      </div>
+
+      <div style="text-align:center;">
+        <button type="submit" id="submitButton" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const editarId = urlParams.get('editar');
+
+    if (!token) {
+      alert('Debe iniciar sesión primero');
+      window.location.href = 'index.html';
+    }
+
+    // Cargar roles desde la API
+    async function cargarRoles() {
+      try {
+        const res = await fetch('/api/roles', { headers:{'Authorization':'Bearer '+token} });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Error al cargar roles');
+        const select = document.getElementById('rol');
+        data.roles.forEach(rol => {
+          const opt = document.createElement('option');
+          opt.value = rol.RolID;
+          opt.textContent = rol.NombreRol;
+          select.appendChild(opt);
         });
+      } catch(err) {
+        console.error(err);
+        alert('Error al cargar roles: '+err.message);
+      }
+    }
 
-        function cancelar() {
-            window.location.href = 'usuarios.html';
+    // Cargar usuario si estamos en modo edición
+    async function cargarUsuario(id) {
+      try {
+        const res = await fetch(`/api/usuarios/${id}`, { headers:{'Authorization':'Bearer '+token} });
+        const data = await res.json();
+        if (!res.ok || !data.usuario) throw new Error(data.message || 'Usuario no encontrado');
+        const u = data.usuario;
+        document.getElementById('nombre').value = u.NombreCompleto;
+        document.getElementById('correo').value = u.Correo;
+        document.getElementById('rol').value = u.RolID;
+        document.getElementById('estado').value = u.Estado ? '1':'0';
+      } catch(err) {
+        console.error(err);
+        alert('Error al cargar usuario: '+err.message);
+        window.location.href = 'usuarios.html';
+      }
+    }
+
+    // Configurar modo edición
+    function configurarEdicion() {
+      if (editarId) {
+        document.getElementById('formTitle').textContent = 'Editar Usuario';
+        document.getElementById('submitButton').textContent = 'Actualizar';
+        document.getElementById('contrasenaGroup').classList.add('hidden');
+        document.getElementById('confirmarGroup').classList.add('hidden');
+        cargarUsuario(editarId);
+      }
+    }
+
+    // Manejo de formulario
+    document.getElementById('usuarioForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errorDiv = document.getElementById('passwordError');
+      errorDiv.style.display = 'none';
+
+      const data = {
+        NombreCompleto: document.getElementById('nombre').value.trim(),
+        Correo: document.getElementById('correo').value.trim(),
+        RolID: parseInt(document.getElementById('rol').value),
+        Estado: parseInt(document.getElementById('estado').value)
+      };
+
+      if (!editarId) {
+        const contrasena = document.getElementById('contrasena').value;
+        const confirmar = document.getElementById('confirmar').value;
+        if (!contrasena || !confirmar) {
+          errorDiv.textContent = 'Las contraseñas son requeridas';
+          errorDiv.style.display = 'block';
+          return;
         }
+        if (contrasena !== confirmar) {
+          errorDiv.textContent = 'Las contraseñas no coinciden';
+          errorDiv.style.display = 'block';
+          return;
+        }
+        data.Contrasena = contrasena;
+      }
 
-        // Inicializar página
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarRoles();
-            configurarModoEdicion();
+      try {
+        const url = editarId ? `/api/usuarios/${editarId}` : '/api/usuarios';
+        const method = editarId ? 'PUT' : 'POST';
+        const res = await fetch(url,{
+          method,
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+          body:JSON.stringify(data)
         });
-    </script>
+        const result = await res.json();
+        if (res.ok && result.success) {
+          alert(editarId ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente');
+          window.location.href = 'usuarios.html';
+        } else {
+          throw new Error(result.message || 'Error en la solicitud');
+        }
+      } catch(err) {
+        console.error(err);
+        alert('Error: '+err.message);
+      }
+    });
+
+    function cancelar(){ window.location.href='usuarios.html'; }
+
+    document.addEventListener('DOMContentLoaded',()=>{ cargarRoles().then(configurarEdicion); });
+  </script>
 </body>
 </html>

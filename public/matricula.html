@@ -1,873 +1,218 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avatar - Matrícula</title>
-    <style>
-        /* Estilos mejorados */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
-            margin: 0;
-            color: #333;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #2e86de 0%, #1c6bc7 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
-            position: relative;
-        }
-        
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #27ae60, #2e86de, #e74c3c);
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        nav {
-            background-color: #f8f9fa;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        nav a {
-            margin: 5px 12px;
-            text-decoration: none;
-            color: #495057;
-            font-weight: 500;
-            padding: 10px 18px;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-        
-        nav a:hover {
-            color: #2e86de;
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-            transform: translateY(-2px);
-        }
-        
-        .matricula-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 25px;
-            padding: 30px;
-        }
-        
-        .form-container, .materias-container {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.06);
-            border: 1px solid #e9ecef;
-        }
-        
-        .form-group {
-            margin-bottom: 22px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #495057;
-            font-size: 15px;
-        }
-        
-        select, input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background-color: #f8f9fa;
-        }
-        
-        select:focus, input:focus {
-            outline: none;
-            border-color: #2e86de;
-            box-shadow: 0 0 0 4px rgba(46, 134, 222, 0.15);
-            background-color: #fff;
-        }
-        
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 16px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #2e86de 0%, #1c6bc7 100%);
-            color: white;
-            box-shadow: 0 4px 8px rgba(46, 134, 222, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(46, 134, 222, 0.4);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(149, 165, 166, 0.3);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
-            color: white;
-            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .section-title {
-            color: #2e86de;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 12px;
-            margin-top: 0;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 25px;
-            background: linear-gradient(135deg, #2e86de 0%, #1c6bc7 100%);
-            border-radius: 4px;
-            margin-right: 12px;
-        }
-        
-        .materias-list {
-            margin-top: 20px;
-            max-height: 320px;
-            overflow-y: auto;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
-            background-color: #f8f9fa;
-        }
-        
-        .materia-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            transition: all 0.3s;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background-color: white;
-        }
-        
-        .materia-item:hover {
-            background-color: #f1f8ff;
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .materia-info {
-            flex: 1;
-        }
-        
-        .materia-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .status-pendiente {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        
-        .status-confirmada {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        
-        .status-rechazada {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        
-        .alert {
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-        
-        .alert-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .summary-container {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border: 1px solid #dee2e6;
-        }
-        
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #dee2e6;
-        }
-        
-        .summary-total {
-            font-weight: bold;
-            border-top: 2px solid #dee2e6;
-            padding-top: 12px;
-            margin-top: 8px;
-            font-size: 17px;
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 968px) {
-            .matricula-container {
-                grid-template-columns: 1fr;
-            }
-            
-            nav {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            nav a {
-                margin: 6px 0;
-                width: 90%;
-                text-align: center;
-            }
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 10px;
-            background: linear-gradient(135deg, #27ae60, #2e86de);
-            /* Propiedad estándar agregada para compatibilidad */
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 14px;
-            border-top: 1px solid #e9ecef;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema Avatar - Matrícula</title>
+  <link rel="stylesheet" href="styles.css"/> <!-- puedes separar estilos -->
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><span class="logo">Avatar</span> Sistema de Matrícula</h1>
-        </header>
-        
-        <nav>
-            <a href="index.html">Inicio</a>
-            <a href="usuarios.html">Usuarios</a>
-            <a href="estudiantes.html">Estudiantes</a>
-            <a href="profesores.html">Profesores</a>
-            <a href="materias.html">Materias</a>
-            <a href="planes.html">Planes de estudio</a>
-            <a href="pagos.html">Pagos</a>
-            <a href="configuracion.html">Configuración</a>
-        </nav>
+<div class="container">
+  <header>
+    <h1><span class="logo">Avatar</span> Sistema de Matrícula</h1>
+  </header>
 
-        <div class="matricula-container">
-            <div class="form-container">
-                <h2 class="section-title">Nueva Matrícula</h2>
-                <div id="alertBox"></div>
-                
-                <form id="matriculaForm">
-                    <div class="form-group">
-                        <label for="estudiante">Estudiante:</label>
-                        <select id="estudiante" required>
-                            <option value="">Seleccione un estudiante</option>
-                            <!-- Opciones se cargarán dinámicamente -->
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="periodo">Periodo Académico:</label>
-                        <select id="periodo" required>
-                            <option value="">Seleccione un periodo</option>
-                            <!-- Opciones se cargarán dinámicamente -->
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="tipo">Tipo de Matrícula:</label>
-                        <select id="tipo" required>
-                            <option value="Ordinaria">Ordinaria</option>
-                            <option value="Extraordinaria">Extraordinaria</option>
-                            <option value="Especial">Especial</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary" id="btnIniciar">
-                            Iniciar Matrícula
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-                
-                <div class="summary-container" id="resumenMatricula" style="display: none;">
-                    <h3>Resumen de Matrícula</h3>
-                    <div class="summary-item">
-                        <span>Total de materias:</span>
-                        <span id="totalMaterias">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Total de créditos:</span>
-                        <span id="totalCreditos">0</span>
-                    </div>
-                    <div class="summary-item summary-total">
-                        <span>Estado:</span>
-                        <span class="status-pendiente" id="estadoMatricula">Pendiente</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="materias-container">
-                <h2 class="section-title">Materias Disponibles</h2>
-                <div id="materiasDisponibles" class="materias-list">
-                    <div class="alert alert-info">
-                        Seleccione un estudiante y periodo para ver las materias disponibles
-                    </div>
-                </div>
-                
-                <h2 class="section-title">Materias Seleccionadas</h2>
-                <div id="materiasSeleccionadas" class="materias-list">
-                    <div class="alert alert-info">
-                        No hay materias seleccionadas
-                    </div>
-                </div>
-                
-                <div style="text-align: right; margin-top: 20px;">
-                    <button id="btnConfirmar" class="btn btn-success" disabled onclick="confirmarMatricula()">
-                        Confirmar Matrícula
-                    </button>
-                </div>
-            </div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="usuarios.html">Usuarios</a>
+    <a href="estudiantes.html">Estudiantes</a>
+    <a href="profesores.html">Profesores</a>
+    <a href="materias.html">Materias</a>
+    <a href="planes.html">Planes de estudio</a>
+    <a href="pagos.html">Pagos</a>
+    <a href="configuracion.html">Configuración</a>
+  </nav>
+
+  <div class="matricula-container">
+    <div class="form-container">
+      <h2 class="section-title">Nueva Matrícula</h2>
+      <div id="alertBox"></div>
+
+      <form id="matriculaForm">
+        <div class="form-group">
+          <label for="estudiante">Estudiante:</label>
+          <select id="estudiante" required></select>
         </div>
-        
-        <div class="footer">
-            Sistema Avatar © 2025 - CUC
+        <div class="form-group">
+          <label for="periodo">Periodo Académico:</label>
+          <select id="periodo" required></select>
         </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de Matrícula:</label>
+          <select id="tipo" required>
+            <option value="Ordinaria">Ordinaria</option>
+            <option value="Extraordinaria">Extraordinaria</option>
+            <option value="Especial">Especial</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" id="btnIniciar">Iniciar Matrícula</button>
+          <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">Cancelar</button>
+        </div>
+      </form>
+
+      <div class="summary-container" id="resumenMatricula" style="display:none;">
+        <h3>Resumen de Matrícula</h3>
+        <div class="summary-item"><span>Total de materias:</span> <span id="totalMaterias">0</span></div>
+        <div class="summary-item"><span>Total de créditos:</span> <span id="totalCreditos">0</span></div>
+        <div class="summary-item summary-total"><span>Total a pagar:</span> <span id="totalCosto">₡0</span></div>
+        <div class="summary-item summary-total"><span>Estado:</span> <span class="status-pendiente" id="estadoMatricula">Pendiente</span></div>
+      </div>
     </div>
 
-    <script>
-        // Variables globales
-        let estudianteActual = null;
-        let periodoActual = null;
-        let materiasDisponibles = [];
-        let materiasSeleccionadas = [];
-        let token = localStorage.getItem('token');
-        
-        // Mostrar alertas
-        function mostrarAlerta(mensaje, tipo = 'info') {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.innerHTML = `
-                <div class="alert alert-${tipo}">
-                    ${mensaje}
-                </div>
-            `;
-            alertBox.style.display = 'block';
-            
-            // Ocultar después de 5 segundos si no es error
-            if (tipo !== 'error') {
-                setTimeout(() => {
-                    alertBox.style.display = 'none';
-                }, 5000);
-            }
-        }
-        
-        // Cargar estudiantes y periodos al iniciar
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!token) {
-                mostrarAlerta('Debe iniciar sesión para acceder al sistema', 'error');
-                // Redirigir al login después de 2 segundos
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-                return;
-            }
-            
-            await cargarEstudiantes();
-            await cargarPeriodos();
-            
-            document.getElementById('matriculaForm').addEventListener('submit', iniciarMatricula);
-        });
-        
-        // Cargar estudiantes
-        async function cargarEstudiantes() {
-            try {
-                document.getElementById('estudiante').innerHTML = '<option value="">Seleccione un estudiante</option>';
-                
-                const response = await fetch('/api/estudiantes', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.status === 401) {
-                    // Token inválido o expirado
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    const select = document.getElementById('estudiante');
-                    data.estudiantes.forEach(est => {
-                        const option = document.createElement('option');
-                        option.value = est.EstudianteID;
-                        option.textContent = `${est.Nombre} (${est.Cedula})`;
-                        select.appendChild(option);
-                    });
-                } else {
-                    mostrarAlerta('Error al cargar estudiantes: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error al cargar estudiantes:', error);
-                mostrarAlerta('Error de conexión al cargar estudiantes', 'error');
-            }
-        }
-        
-        // Cargar periodos académicos
-        async function cargarPeriodos() {
-            try {
-                document.getElementById('periodo').innerHTML = '<option value="">Seleccione un periodo</option>';
-                
-                const response = await fetch('/api/periodos', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    const select = document.getElementById('periodo');
-                    data.periodos.forEach(per => {
-                        const option = document.createElement('option');
-                        option.value = per.PeriodoID;
-                        option.textContent = `${per.Nombre} - ${per.Anio}`;
-                        select.appendChild(option);
-                    });
-                } else {
-                    mostrarAlerta('Error al cargar periodos: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error al cargar periodos:', error);
-                mostrarAlerta('Error de conexión al cargar periodos académicos', 'error');
-            }
-        }
-        
-        // Iniciar proceso de matrícula
-        async function iniciarMatricula(e) {
-            e.preventDefault();
-            
-            estudianteActual = document.getElementById('estudiante').value;
-            periodoActual = document.getElementById('periodo').value;
-            
-            if (!estudianteActual || !periodoActual) {
-                mostrarAlerta('Seleccione un estudiante y un periodo', 'error');
-                return;
-            }
-            
-            try {
-                // Mostrar loading
-                document.getElementById('btnIniciar').innerHTML = '<span class="loading"></span> Cargando...';
-                document.getElementById('btnIniciar').disabled = true;
-                
-                // Obtener materias disponibles para este estudiante en este periodo
-                const response = await fetch(`/api/materias-disponibles?estudiante=${estudianteActual}&periodo=${periodoActual}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const data = await response.json();
-                
-                // Restaurar botón
-                document.getElementById('btnIniciar').innerHTML = 'Iniciar Matrícula';
-                document.getElementById('btnIniciar').disabled = false;
-                
-                if (data.success) {
-                    materiasDisponibles = data.materias;
-                    mostrarMateriasDisponibles();
-                    document.getElementById('resumenMatricula').style.display = 'block';
-                } else {
-                    mostrarAlerta('Error al cargar materias: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error al cargar materias disponibles:', error);
-                mostrarAlerta('Error de conexión al cargar materias', 'error');
-                
-                // Restaurar botón
-                document.getElementById('btnIniciar').innerHTML = 'Iniciar Matrícula';
-                document.getElementById('btnIniciar').disabled = false;
-            }
-        }
-        
-        // Mostrar materias disponibles
-        // En la función mostrarMateriasDisponibles, agrega el costo
-function mostrarMateriasDisponibles() {
-    const container = document.getElementById('materiasDisponibles');
-    
-    if (materiasDisponibles.length === 0) {
-        container.innerHTML = `
-            <div class="alert alert-info">
-                No hay materias disponibles para este periodo
-            </div>
-        `;
-        return;
-    }
-    
-    let html = '';
-    materiasDisponibles.forEach(materia => {
-        const costo = materia.Costo || materia.Creditos * 25000; // Precio por defecto si no tiene
-        html += `
-            <div class="materia-item">
-                <div class="materia-info">
-                    <strong>${materia.Codigo}</strong> - ${materia.Nombre} 
-                    <br><small>${materia.Creditos} créditos | ${materia.NombrePlan || 'Sin plan'}</small>
-                    <br><small class="costo">Costo: ₡${costo.toLocaleString('es-CR')}</small>
-                </div>
-                <div class="materia-actions">
-                    <button class="btn btn-primary" onclick="agregarMateria(${materia.MateriaID})">
-                        Agregar
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-    
-    container.innerHTML = html;
+    <div class="materias-container">
+      <h2 class="section-title">Materias Disponibles</h2>
+      <div id="materiasDisponibles" class="materias-list"></div>
+
+      <h2 class="section-title">Materias Seleccionadas</h2>
+      <div id="materiasSeleccionadas" class="materias-list"></div>
+
+      <div style="text-align:right;margin-top:20px;">
+        <button id="btnConfirmar" class="btn btn-success" disabled onclick="confirmarMatricula()">Confirmar Matrícula</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Sistema Avatar © 2025 - CUC</div>
+</div>
+
+<script>
+let estudianteActual=null, periodoActual=null;
+let materiasDisponibles=[], materiasSeleccionadas=[];
+const token = localStorage.getItem('token');
+if(!token){window.location.href="login.html";}
+
+// Mostrar alerta
+function mostrarAlerta(msg,tipo="info"){
+  const box=document.getElementById("alertBox");
+  box.innerHTML=`<div class="alert alert-${tipo}">${msg}</div>`;
+  box.style.display="block";
 }
 
-// Y en el resumen, agrega el cálculo del total
-function actualizarResumen() {
-    const totalMaterias = materiasSeleccionadas.length;
-    const totalCreditos = materiasSeleccionadas.reduce((sum, materia) => sum + (materia.Creditos || 0), 0);
-    const totalCosto = materiasSeleccionadas.reduce((sum, materia) => {
-        const costo = materia.Costo || materia.Creditos * 25000;
-        return sum + costo;
-    }, 0);
-    
-    document.getElementById('totalMaterias').textContent = totalMaterias;
-    document.getElementById('totalCreditos').textContent = totalCreditos;
-    
-    // Agrega esto al resumen
-    const summaryContainer = document.getElementById('resumenMatricula');
-    let costoHtml = `
-        <div class="summary-item">
-            <span>Total a pagar:</span>
-            <span>₡${totalCosto.toLocaleString('es-CR')}</span>
-        </div>
-    `;
-    
-    // Actualiza o agrega el elemento de costo
-    let costoElement = document.getElementById('totalCosto');
-    if (!costoElement) {
-        costoElement = document.createElement('div');
-        costoElement.id = 'totalCosto';
-        costoElement.className = 'summary-item summary-total';
-        summaryContainer.appendChild(costoElement);
-    }
-    costoElement.innerHTML = `<span>Total a pagar:</span><span>₡${totalCosto.toLocaleString('es-CR')}</span>`;
+// Cargar estudiantes
+async function cargarEstudiantes(){
+  const res=await fetch("/api/estudiantes",{headers:{Authorization:`Bearer ${token}`}});
+  if(res.status===401){localStorage.removeItem('token');return location.href="login.html";}
+  const data=await res.json();
+  const sel=document.getElementById("estudiante");
+  sel.innerHTML="<option value=''>Seleccione...</option>";
+  data.estudiantes.forEach(e=>{
+    sel.innerHTML+=`<option value="${e.estudianteid}">${e.nombre} (${e.cedula})</option>`;
+  });
 }
-        
-        // Agregar materia a la selección
-        function agregarMateria(materiaID) {
-            const materia = materiasDisponibles.find(m => m.MateriaID === materiaID);
-            
-            if (materia && !materiasSeleccionadas.some(m => m.MateriaID === materiaID)) {
-                materiasSeleccionadas.push(materia);
-                mostrarMateriasSeleccionadas();
-                document.getElementById('btnConfirmar').disabled = false;
-                
-                // Actualizar resumen
-                actualizarResumen();
-            }
-        }
-        
-        // Mostrar materias seleccionadas
-        function mostrarMateriasSeleccionadas() {
-            const container = document.getElementById('materiasSeleccionadas');
-            
-            if (materiasSeleccionadas.length === 0) {
-                container.innerHTML = `
-                    <div class="alert alert-info">
-                        No hay materias seleccionadas
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            materiasSeleccionadas.forEach(materia => {
-                html += `
-                    <div class="materia-item">
-                        <div class="materia-info">
-                            <strong>${materia.Codigo}</strong> - ${materia.Nombre} 
-                            <br><small>${materia.Creditos} créditos</small>
-                        </div>
-                        <div class="materia-actions">
-                            <button class="btn btn-danger" onclick="quitarMateria(${materia.MateriaID})">
-                                Quitar
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        // Actualizar resumen de matrícula
-        function actualizarResumen() {
-            const totalMaterias = materiasSeleccionadas.length;
-            const totalCreditos = materiasSeleccionadas.reduce((sum, materia) => sum + (materia.Creditos || 0), 0);
-            
-            document.getElementById('totalMaterias').textContent = totalMaterias;
-            document.getElementById('totalCreditos').textContent = totalCreditos;
-        }
-        
-        // Quitar materia de la selección
-        function quitarMateria(materiaID) {
-            materiasSeleccionadas = materiasSeleccionadas.filter(m => m.MateriaID !== materiaID);
-            mostrarMateriasSeleccionadas();
-            actualizarResumen();
-            
-            if (materiasSeleccionadas.length === 0) {
-                document.getElementById('btnConfirmar').disabled = true;
-            }
-        }
-        
-        // Confirmar matrícula
-        async function confirmarMatricula() {
-            if (!estudianteActual || !periodoActual || materiasSeleccionadas.length === 0) {
-                mostrarAlerta('Complete todos los pasos del proceso', 'error');
-                return;
-            }
-            
-            const tipoMatricula = document.getElementById('tipo').value;
-            
-            if (!confirm(`¿Está seguro de confirmar la matrícula de ${materiasSeleccionadas.length} materias?`)) {
-                return;
-            }
-            
-            try {
-                // Mostrar loading
-                document.getElementById('btnConfirmar').innerHTML = '<span class="loading"></span> Procesando...';
-                document.getElementById('btnConfirmar').disabled = true;
-                
-                const response = await fetch('/api/matricula', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        estudianteID: estudianteActual,
-                        periodoID: periodoActual,
-                        tipoMatricula: tipoMatricula,
-                        materias: materiasSeleccionadas.map(m => m.MateriaID)
-                    })
-                });
-                
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const data = await response.json();
-                
-                // Restaurar botón
-                document.getElementById('btnConfirmar').innerHTML = 'Confirmar Matrícula';
-                document.getElementById('btnConfirmar').disabled = false;
-                
-                if (data.success) {
-                    mostrarAlerta('Matrícula registrada correctamente', 'success');
-                    document.getElementById('estadoMatricula').textContent = 'Confirmada';
-                    document.getElementById('estadoMatricula').className = 'status-confirmada';
-                    
-                    // Deshabilitar formulario después de confirmar
-                    document.getElementById('matriculaForm').querySelectorAll('select, button').forEach(el => {
-                        el.disabled = true;
-                    });
-                    
-                    document.getElementById('btnConfirmar').disabled = true;
-                    
-                    // Ocultar acciones de materias
-                    document.querySelectorAll('.materia-actions').forEach(action => {
-                        action.style.display = 'none';
-                    });
-                } else {
-                    mostrarAlerta('Error: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error al confirmar matrícula:', error);
-                mostrarAlerta('Error de conexión al confirmar matrícula', 'error');
-                
-                // Restaurar botón
-                document.getElementById('btnConfirmar').innerHTML = 'Confirmar Matrícula';
-                document.getElementById('btnConfirmar').disabled = false;
-            }
-        }
-        
-        // Limpiar formulario
-        function limpiarFormulario() {
-            if (materiasSeleccionadas.length > 0 && !confirm('¿Está seguro de cancelar? Se perderán todas las materias seleccionadas.')) {
-                return;
-            }
-            
-            document.getElementById('matriculaForm').reset();
-            estudianteActual = null;
-            periodoActual = null;
-            materiasDisponibles = [];
-            materiasSeleccionadas = [];
-            
-            document.getElementById('materiasDisponibles').innerHTML = `
-                <div class="alert alert-info">
-                    Seleccione un estudiante y periodo para ver las materias disponibles
-                </div>
-            `;
-            
-            document.getElementById('materiasSeleccionadas').innerHTML = `
-                <div class="alert alert-info">
-                    No hay materias seleccionadas
-                </div>
-            `;
-            
-            document.getElementById('btnConfirmar').disabled = true;
-            document.getElementById('resumenMatricula').style.display = 'none';
-            
-            // Habilitar formulario
-            document.getElementById('matriculaForm').querySelectorAll('select, button').forEach(el => {
-                el.disabled = false;
-            });
-            
-            // Ocultar alertas
-            document.getElementById('alertBox').style.display = 'none';
-        }
-    </script>
+
+// Cargar periodos
+async function cargarPeriodos(){
+  const res=await fetch("/api/periodos",{headers:{Authorization:`Bearer ${token}`}});
+  if(res.status===401){localStorage.removeItem('token');return location.href="login.html";}
+  const data=await res.json();
+  const sel=document.getElementById("periodo");
+  sel.innerHTML="<option value=''>Seleccione...</option>";
+  data.periodos.forEach(p=>{
+    sel.innerHTML+=`<option value="${p.periodoid}">${p.nombre} - ${p.anio}</option>`;
+  });
+}
+
+// Iniciar matrícula
+async function iniciarMatricula(e){
+  e.preventDefault();
+  estudianteActual=document.getElementById("estudiante").value;
+  periodoActual=document.getElementById("periodo").value;
+  if(!estudianteActual||!periodoActual)return mostrarAlerta("Seleccione estudiante y periodo","error");
+
+  const res=await fetch(`/api/materias?periodo=${periodoActual}`,{headers:{Authorization:`Bearer ${token}`}});
+  if(res.status===401)return location.href="login.html";
+  const data=await res.json();
+  materiasDisponibles=data.materias||[];
+  mostrarMateriasDisponibles();
+  document.getElementById("resumenMatricula").style.display="block";
+}
+
+// Mostrar materias
+function mostrarMateriasDisponibles(){
+  const cont=document.getElementById("materiasDisponibles");
+  if(materiasDisponibles.length===0){cont.innerHTML="<div class='alert alert-info'>No hay materias disponibles</div>";return;}
+  cont.innerHTML="";
+  materiasDisponibles.forEach(m=>{
+    const costo=m.costo||m.creditos*25000;
+    cont.innerHTML+=`
+      <div class="materia-item">
+        <div class="materia-info"><strong>${m.codigo}</strong> - ${m.nombre}<br>
+          <small>${m.creditos} créditos</small><br>
+          <small>Costo: ₡${costo.toLocaleString("es-CR")}</small>
+        </div>
+        <div class="materia-actions"><button class="btn btn-primary" onclick="agregarMateria(${m.materiaid})">Agregar</button></div>
+      </div>`;
+  });
+}
+
+// Agregar/Quitar materias
+function agregarMateria(id){
+  const m=materiasDisponibles.find(x=>x.materiaid===id);
+  if(m && !materiasSeleccionadas.find(x=>x.materiaid===id)){
+    materiasSeleccionadas.push(m);
+    mostrarMateriasSeleccionadas();
+    actualizarResumen();
+    document.getElementById("btnConfirmar").disabled=false;
+  }
+}
+function quitarMateria(id){
+  materiasSeleccionadas=materiasSeleccionadas.filter(x=>x.materiaid!==id);
+  mostrarMateriasSeleccionadas();
+  actualizarResumen();
+  if(materiasSeleccionadas.length===0)document.getElementById("btnConfirmar").disabled=true;
+}
+function mostrarMateriasSeleccionadas(){
+  const cont=document.getElementById("materiasSeleccionadas");
+  if(materiasSeleccionadas.length===0){cont.innerHTML="<div class='alert alert-info'>No hay materias seleccionadas</div>";return;}
+  cont.innerHTML="";
+  materiasSeleccionadas.forEach(m=>{
+    cont.innerHTML+=`
+      <div class="materia-item">
+        <div class="materia-info"><strong>${m.codigo}</strong> - ${m.nombre} (${m.creditos} créditos)</div>
+        <div class="materia-actions"><button class="btn btn-danger" onclick="quitarMateria(${m.materiaid})">Quitar</button></div>
+      </div>`;
+  });
+}
+
+// Resumen
+function actualizarResumen(){
+  const totalMat=materiasSeleccionadas.length;
+  const totalCred=materiasSeleccionadas.reduce((s,m)=>s+(m.creditos||0),0);
+  const totalCosto=materiasSeleccionadas.reduce((s,m)=>s+(m.costo||m.creditos*25000),0);
+  document.getElementById("totalMaterias").textContent=totalMat;
+  document.getElementById("totalCreditos").textContent=totalCred;
+  document.getElementById("totalCosto").textContent="₡"+totalCosto.toLocaleString("es-CR");
+}
+
+// Confirmar
+async function confirmarMatricula(){
+  if(!estudianteActual||!periodoActual||materiasSeleccionadas.length===0)return mostrarAlerta("Complete todo","error");
+  const body={estudianteID:estudianteActual,periodoID:periodoActual,tipoMatricula:document.getElementById("tipo").value,materias:materiasSeleccionadas.map(m=>m.materiaid)};
+  const res=await fetch("/api/matriculas",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
+  const data=await res.json();
+  if(data.success){
+    mostrarAlerta("Matrícula registrada","success");
+    document.getElementById("estadoMatricula").textContent="Confirmada";
+    document.getElementById("estadoMatricula").className="status-confirmada";
+  }else mostrarAlerta("Error: "+data.message,"error");
+}
+
+// Reset
+function limpiarFormulario(){
+  document.getElementById("matriculaForm").reset();
+  materiasDisponibles=[];materiasSeleccionadas=[];
+  document.getElementById("materiasDisponibles").innerHTML="<div class='alert alert-info'>Seleccione estudiante y periodo</div>";
+  document.getElementById("materiasSeleccionadas").innerHTML="<div class='alert alert-info'>No hay materias seleccionadas</div>";
+  document.getElementById("btnConfirmar").disabled=true;
+  document.getElementById("resumenMatricula").style.display="none";
+}
+
+// Init
+document.addEventListener("DOMContentLoaded",()=>{
+  cargarEstudiantes();cargarPeriodos();
+  document.getElementById("matriculaForm").addEventListener("submit",iniciarMatricula);
+});
+</script>
 </body>
 </html>

@@ -1,503 +1,178 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avatar - Inicio</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%);
-            margin: 0;
-            padding: 0;
-            color: #2c3e50;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.15);
-            margin-bottom: 50px;
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 3rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(45deg, #ffffff, #fef3c7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-        
-        .logo-birrete {
-            display: inline-block;
-            font-size: 3.2rem;
-            color: #fbbf24;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-            animation: gentle-float 3s ease-in-out infinite;
-        }
-        
-        @keyframes gentle-float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        .subtitle {
-            font-size: 1.3em;
-            opacity: 0.9;
-            margin-top: 15px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 35px 25px;
-            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.08);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            border: 2px solid rgba(59, 130, 246, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.2), transparent);
-            transition: left 0.6s;
-        }
-        
-        .card:hover::before {
-            left: 100%;
-        }
-        
-        .card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-        
-        .card h2 {
-            color: #1e3a8a;
-            margin-top: 20px;
-            margin-bottom: 15px;
-            font-size: 1.6em;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-        
-        .card p {
-            color: #64748b;
-            font-weight: 400;
-            line-height: 1.6;
-            margin: 0;
-        }
-        
-        .card .icon {
-            font-size: 3.5em;
-            color: #3b82f6;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover .icon {
-            transform: scale(1.1) rotate(5deg);
-            color: #fbbf24;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: #64748b;
-            font-size: 0.95em;
-            margin-top: 50px;
-            font-weight: 400;
-        }
-
-        .user-info {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            color: white;
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 20px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 10px 18px;
-            cursor: pointer;
-            margin-left: 15px;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-logout:hover {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-        }
-
-        .user-welcome {
-            margin-right: 15px;
-            font-weight: 500;
-            font-size: 0.95em;
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .user-info {
-                position: static;
-                text-align: center;
-                margin-bottom: 25px;
-                justify-content: center;
-                background: rgba(255, 255, 255, 0.2);
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-            }
-            
-            header {
-                padding: 80px 0 40px 0;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-        }
-
-        /* Estilo para la página de login */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%);
-        }
-
-        .login-form {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
-            padding: 50px;
-            border-radius: 25px;
-            box-shadow: 0 25px 80px rgba(59, 130, 246, 0.15);
-            width: 100%;
-            max-width: 450px;
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(59, 130, 246, 0.1);
-        }
-
-        .login-form h2 {
-            text-align: center;
-            color: #1e3a8a;
-            margin-bottom: 40px;
-            font-size: 2.2em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .login-logo {
-            font-size: 2.5rem;
-            color: #fbbf24;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #1e3a8a;
-            font-size: 0.95em;
-            letter-spacing: 0.3px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid rgba(59, 130, 246, 0.2);
-            border-radius: 15px;
-            font-size: 16px;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-2px);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-            letter-spacing: 0.5px;
-        }
-
-        .btn-login:hover {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
-        }
-
-        .error-message {
-            color: #ef4444;
-            text-align: center;
-            margin-top: 20px;
-            display: none;
-            font-weight: 500;
-            padding: 15px;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Avatar - Inicio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+      min-height: 100vh;
+      background: linear-gradient(135deg,#f8f9fa 0%,#e3f2fd 50%,#ffffff 100%);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header {
+      background: linear-gradient(135deg,#1e3a8a 0%,#3b82f6 50%,#60a5fa 100%);
+      color: white; padding: 40px 0; text-align: center;
+      border-radius: 0 0 25px 25px; margin-bottom: 50px; position: relative;
+    }
+    h1 { margin: 0; font-size: 3rem; font-weight: 700; }
+    .subtitle { font-size: 1.2em; margin-top: 10px; opacity: 0.9; }
+    .dashboard {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 30px; margin-bottom: 50px;
+    }
+    .card {
+      background: white; border-radius: 20px; padding: 30px 20px;
+      box-shadow: 0 12px 30px rgba(59,130,246,0.1);
+      text-align: center; text-decoration: none; color: inherit;
+      transition: all .3s; border: 2px solid transparent;
+    }
+    .card:hover { transform: translateY(-8px); border-color:#3b82f6; }
+    .card h2 { margin: 15px 0; font-size: 1.5em; color:#1e3a8a; }
+    .card p { color:#64748b; font-size: 0.95em; }
+    .card .icon { font-size: 3em; color:#3b82f6; margin-bottom: 10px; }
+    .card:hover .icon { color:#fbbf24; }
+    footer { text-align:center; padding:20px; color:#64748b; font-size:0.9em; }
+    .user-info {
+      position:absolute; top:20px; right:20px; display:flex; align-items:center;
+      background: rgba(255,255,255,0.2); padding:10px 15px; border-radius:25px;
+    }
+    .btn-logout {
+      background:#e11d48; color:white; border:none; padding:8px 14px;
+      border-radius:20px; cursor:pointer; margin-left:10px; font-weight:600;
+    }
+    .login-container {
+      display:flex; justify-content:center; align-items:center;
+      min-height:100vh;
+    }
+    .login-form {
+      background:white; padding:40px; border-radius:20px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.1);
+      width:100%; max-width:400px; text-align:center;
+    }
+    .login-form h2 { margin-bottom:30px; color:#1e3a8a; }
+    .form-group { margin-bottom:20px; text-align:left; }
+    .form-group label { font-weight:600; color:#1e3a8a; }
+    .form-group input {
+      width:100%; padding:12px; border:1px solid #ccc; border-radius:10px;
+    }
+    .btn-login {
+      width:100%; padding:12px; border:none; border-radius:10px;
+      background:#3b82f6; color:white; font-weight:600; cursor:pointer;
+    }
+    .btn-login:hover { background:#1e40af; }
+    .error-message {
+      color:#e11d48; margin-top:15px; display:none;
+      background:#fee2e2; padding:10px; border-radius:8px;
+    }
+  </style>
 </head>
 <body>
-    <div id="loginPage" class="login-container" style="display: none;">
-        <div class="login-form">
-            <h2>
-                <span class="login-logo">🎓</span>
-                Sistema Avatar
-            </h2>
-            <div class="form-group">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" placeholder="Ingrese su correo">
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" placeholder="Ingrese su contraseña">
-            </div>
-            <button class="btn-login" onclick="login()">Iniciar Sesión</button>
-            <div id="loginError" class="error-message">
-                Credenciales incorrectas. Por favor, intente nuevamente.
-            </div>
-        </div>
+  <!-- Login -->
+  <div id="loginPage" class="login-container" style="display:none;">
+    <div class="login-form">
+      <h2>🎓 Sistema Avatar</h2>
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" placeholder="Ingrese su correo">
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="Ingrese su contraseña">
+      </div>
+      <button class="btn-login" onclick="login()">Iniciar Sesión</button>
+      <div id="loginError" class="error-message"></div>
     </div>
+  </div>
 
-    <div id="mainContent">
-        <header>
-            <div class="container">
-                <div class="user-info">
-                    <span class="user-welcome">Bienvenido, <span id="userName"></span></span>
-                    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
-                </div>
-                <h1>
-                    <span class="logo-birrete">🎓</span>
-                    Sistema Avatar
-                </h1>
-                <p class="subtitle">Plataforma Académica Universitaria - Gestión Integral</p>
-            </div>
-        </header>
-        
-        <div class="container">
-            <div class="dashboard">
-                <a href="usuarios.html" class="card">
-                    <div class="icon"><i class="fas fa-users"></i></div>
-                    <h2>Usuarios</h2>
-                    <p>Administración de usuarios del sistema</p>
-                </a>
-                
-                <a href="estudiantes.html" class="card">
-                    <div class="icon"><i class="fas fa-user-graduate"></i></div>
-                    <h2>Estudiantes</h2>
-                    <p>Gestión de estudiantes registrados</p>
-                </a>
-                
-                <a href="profesores.html" class="card">
-                    <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <h2>Profesores</h2>
-                    <p>Administración del personal docente</p>
-                </a>
-                
-                <a href="materias.html" class="card">
-                    <div class="icon"><i class="fas fa-book"></i></div>
-                    <h2>Materias</h2>
-                    <p>Catálogo de materias académicas</p>
-                </a>
-                
-                <a href="planes.html" class="card">
-                    <div class="icon"><i class="fas fa-clipboard-list"></i></div>
-                    <h2>Planes de Estudio</h2>
-                    <p>Configuración de programas académicos</p>
-                </a>
-                
-                <a href="matricula.html" class="card">
-                    <div class="icon"><i class="fas fa-file-signature"></i></div>
-                    <h2>Matrícula</h2>
-                    <p>Proceso de matrícula estudiantil</p>
-                </a>
-                
-                <a href="pagos.html" class="card">
-                    <div class="icon"><i class="fas fa-money-bill-wave"></i></div>
-                    <h2>Pagos</h2>
-                    <p>Gestión de pagos y finanzas</p>
-                </a>
-                
-                <a href="configuracion.html" class="card">
-                    <div class="icon"><i class="fas fa-cog"></i></div>
-                    <h2>Configuración</h2>
-                    <p>Ajustes del sistema</p>
-                </a>
-            </div>
+  <!-- Dashboard -->
+  <div id="mainContent" style="display:none;">
+    <header>
+      <div class="container">
+        <div class="user-info">
+          Bienvenido, <span id="userName"></span>
+          <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
         </div>
-        
-        <footer>
-            <p>Sistema Avatar &copy; 2025 - Plataforma Académica Universitaria</p>
-        </footer>
+        <h1>🎓 Sistema Avatar</h1>
+        <p class="subtitle">Plataforma Académica Universitaria - Gestión Integral</p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="dashboard">
+        <a href="usuarios.html" class="card"><div class="icon"><i class="fas fa-users"></i></div><h2>Usuarios</h2><p>Administración de usuarios</p></a>
+        <a href="estudiantes.html" class="card"><div class="icon"><i class="fas fa-user-graduate"></i></div><h2>Estudiantes</h2><p>Gestión de estudiantes</p></a>
+        <a href="profesores.html" class="card"><div class="icon"><i class="fas fa-chalkboard-teacher"></i></div><h2>Profesores</h2><p>Administración docente</p></a>
+        <a href="materias.html" class="card"><div class="icon"><i class="fas fa-book"></i></div><h2>Materias</h2><p>Catálogo de materias</p></a>
+        <a href="planes.html" class="card"><div class="icon"><i class="fas fa-clipboard-list"></i></div><h2>Planes</h2><p>Programas académicos</p></a>
+        <a href="matricula.html" class="card"><div class="icon"><i class="fas fa-file-signature"></i></div><h2>Matrícula</h2><p>Proceso de matrícula</p></a>
+        <a href="pagos.html" class="card"><div class="icon"><i class="fas fa-money-bill-wave"></i></div><h2>Pagos</h2><p>Gestión de pagos</p></a>
+        <a href="configuracion.html" class="card"><div class="icon"><i class="fas fa-cog"></i></div><h2>Configuración</h2><p>Ajustes del sistema</p></a>
+      </div>
     </div>
+    <footer><p>Sistema Avatar &copy; 2025</p></footer>
+  </div>
 
-    <script>
-        // Verificar autenticación al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user'));
-            
-            if (token && user) {
-                // Usuario autenticado - mostrar dashboard
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('userName').textContent = user.nombre;
-            } else {
-                // No autenticado - mostrar login
-                document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('loginPage').style.display = 'flex';
-            }
+  <script>
+    // Verificar sesión al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (token && user) {
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('userName').textContent = user.nombre;
+      } else {
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+      }
+    });
+
+    // Iniciar sesión
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.style.display = 'none';
+      if (!email || !password) {
+        errorDiv.textContent = 'Por favor complete todos los campos';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch('/api/login', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({ correo: email, clave: password })
         });
-
-        // Función para iniciar sesión
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-            
-            if (!email || !password) {
-                errorDiv.textContent = 'Por favor, complete todos los campos';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ correo: email, clave: password })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Guardar token y redirigir
-                    localStorage.setItem('token', result.token);
-                    
-                    // Decodificar el token para obtener información del usuario
-                    const payload = JSON.parse(atob(result.token.split('.')[1]));
-                    const user = {
-                        id: payload.id,
-                        nombre: payload.nombre,
-                        rol: payload.rol,
-                        correo: payload.correo
-                    };
-                    localStorage.setItem('user', JSON.stringify(user));
-                    
-                    // Recargar la página para mostrar el dashboard
-                    window.location.reload();
-                } else {
-                    errorDiv.textContent = result.message || 'Error al iniciar sesión';
-                    errorDiv.style.display = 'block';
-                }
-            } catch (error) {
-                errorDiv.textContent = 'Error de conexión. Intente nuevamente.';
-                errorDiv.style.display = 'block';
-                console.error('Error:', error);
-            }
+        const data = await res.json();
+        if (res.ok && data.success) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.usuario));
+          window.location.reload();
+        } else {
+          errorDiv.textContent = data.message || 'Credenciales incorrectas';
+          errorDiv.style.display = 'block';
         }
+      } catch (err) {
+        console.error(err);
+        errorDiv.textContent = 'Error de conexión con el servidor';
+        errorDiv.style.display = 'block';
+      }
+    }
 
-        // Función para cerrar sesión
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.reload();
-        }
-
-        // Permitir enviar el formulario con Enter
-        document.getElementById('password').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                login();
-            }
-        });
-    </script>
+    // Cerrar sesión
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.reload();
+    }
+  </script>
 </body>
 </html>

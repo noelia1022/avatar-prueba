@@ -16,6 +16,9 @@
     th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
     th { background: #2e86de; color: white; }
     tr:nth-child(even) { background: #f9f9f9; }
+    .alert { text-align:center; padding:15px; margin-top:20px; border-radius:5px; }
+    .alert-info { background:#d1ecf1; color:#0c5460; }
+    .alert-error { background:#f8d7da; color:#721c24; }
   </style>
 </head>
 <body>
@@ -42,42 +45,53 @@
 
   <script>
     const token = localStorage.getItem('token');
-    if(!token) {
+    if (!token) {
       alert('Debe iniciar sesión');
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
     }
 
     async function cargarPagos() {
+      const tbody = document.getElementById('tablaPagos');
       try {
         const res = await fetch('/api/pagos', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          alert('Sesión expirada, por favor vuelva a iniciar sesión');
+          return window.location.href = 'login.html';
+        }
+
         const data = await res.json();
-        const tbody = document.getElementById('tablaPagos');
         tbody.innerHTML = '';
 
-        if (!data.success || data.pagos.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6">No hay pagos registrados</td></tr>';
+        if (!data.success || !data.pagos || data.pagos.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="alert alert-info">No hay pagos registrados</td></tr>`;
           return;
         }
 
         data.pagos.forEach(p => {
+          const fecha = p.FechaPago ? new Date(p.FechaPago).toLocaleDateString('es-CR') : '-';
+          const monto = p.Monto ? `₡${Number(p.Monto).toLocaleString('es-CR')}` : '₡0';
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${p.Estudiante}</td>
-            <td>${p.Cedula}</td>
-            <td>${p.Periodo} ${p.Anio}</td>
-            <td>${new Date(p.FechaPago).toLocaleDateString('es-CR')}</td>
-            <td>₡${Number(p.Monto).toLocaleString('es-CR')}</td>
-            <td>${p.MetodoPago}</td>
+            <td>${p.Estudiante || '-'}</td>
+            <td>${p.Cedula || '-'}</td>
+            <td>${p.Periodo ? p.Periodo+' '+(p.Anio||'') : '-'}</td>
+            <td>${fecha}</td>
+            <td>${monto}</td>
+            <td>${p.MetodoPago || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
       } catch (err) {
         console.error('Error cargando pagos:', err);
+        tbody.innerHTML = `<tr><td colspan="6" class="alert alert-error">Error al conectar con el servidor</td></tr>`;
       }
     }
-    cargarPagos();
+
+    document.addEventListener('DOMContentLoaded', cargarPagos);
   </script>
 </body>
 </html>
