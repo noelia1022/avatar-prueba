@@ -1,227 +1,102 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avatar - Usuarios</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #ffffff 100%);
-            margin: 0;
-            padding: 20px;
-            color: #2c3e50;
-            min-height: 100vh;
-        }
-        
-        h1 {
-            color: #1e3a8a;
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .logo-birrete { font-size: 2.8rem; color: #fbbf24; animation: gentle-float 3s ease-in-out infinite; }
-        @keyframes gentle-float { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-8px);} }
-        
-        nav {
-            text-align: center;
-            margin-bottom: 40px;
-            background: rgba(255,255,255,0.95);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(59,130,246,0.1);
-        }
-        
-        nav a {
-            margin: 8px 15px;
-            text-decoration: none;
-            color: #64748b;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        
-        nav a:hover {
-            color: #1e3a8a;
-            background: rgba(59,130,246,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 12px 40px rgba(59,130,246,0.08);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(59,130,246,0.1);
-            text-align: left;
-        }
-        
-        th {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-        
-        tbody tr:hover { background: rgba(59,130,246,0.05); }
-        
-        .actions { display: flex; gap: 8px; }
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-edit { background: #f59e0b; color: white; }
-        .btn-delete { background: #ef4444; color: white; }
-        .btn-add { background: #10b981; color: white; margin-bottom: 20px; }
-        
-        .status-active { color: #10b981; font-weight: bold; }
-        .status-inactive { color: #ef4444; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios - Sistema Avatar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+      color: #2c3e50;
+    }
+    header {
+      background: linear-gradient(135deg,#1e3a8a 0%,#3b82f6 50%,#60a5fa 100%);
+      color: white; padding: 20px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    header h1 { margin:0; font-size:1.5rem; }
+    .btn-back {
+      background:white; color:#1e3a8a; border:none; padding:8px 14px;
+      border-radius:8px; cursor:pointer; font-weight:600;
+    }
+    .container { padding:20px; max-width:1000px; margin:0 auto; }
+    table {
+      width:100%; border-collapse: collapse; background:white;
+      border-radius:10px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    th, td { padding:12px; text-align:left; border-bottom:1px solid #eee; }
+    th { background:#f3f4f6; font-weight:600; color:#1e3a8a; }
+    tr:hover { background:#f9fafb; }
+    .error { color:red; margin-top:10px; }
+  </style>
 </head>
 <body>
-    <h1><span class="logo-birrete">🎓</span> Gestión de Usuarios</h1>
-    
-    <nav>
-        <a href="index.html">Inicio</a>
-        <a href="estudiantes.html">Estudiantes</a>
-        <a href="profesores.html">Profesores</a>
-        <a href="materias.html">Materias</a>
-        <a href="planes.html">Planes de estudio</a>
-        <a href="matricula.html">Matrícula</a>
-        <a href="pagos.html">Pagos</a>
-        <a href="configuracion.html">Configuración</a>
-    </nav>
+  <header>
+    <h1>👥 Usuarios</h1>
+    <button class="btn-back" onclick="window.location.href='index.html'">⬅ Volver</button>
+  </header>
 
-    <div class="table-container">
-        <div style="text-align: right;">
-            <button class="btn btn-add" onclick="location.href='agregar_usuario.html'">
-                <i class="fas fa-plus"></i> Agregar Usuario
-            </button>
-        </div>
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre completo</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tablaUsuarios">
+        <tr><td colspan="5">Cargando...</td></tr>
+      </tbody>
+    </table>
+    <div id="errorMsg" class="error"></div>
+  </div>
 
-        <table id="usuariosTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="6">Cargando usuarios...</td></tr>
-            </tbody>
-        </table>
-    </div>
+  <script>
+    async function cargarUsuarios() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        document.getElementById("errorMsg").textContent = "⚠ Debe iniciar sesión primero.";
+        document.getElementById("tablaUsuarios").innerHTML = "<tr><td colspan='5'>No autorizado</td></tr>";
+        return;
+      }
 
-    <script>
-        const token = localStorage.getItem('token');
-        if(!token) {
-            alert('Debe iniciar sesión');
-            window.location.href = 'index.html';
+      try {
+        const res = await fetch("/api/usuarios", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          const tbody = document.getElementById("tablaUsuarios");
+          tbody.innerHTML = "";
+          data.usuarios.forEach(u => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${u.usuarioid}</td>
+              <td>${u.nombrecompleto}</td>
+              <td>${u.correo}</td>
+              <td>${u.nombrerol}</td>
+              <td>${u.estado ? "Activo" : "Inactivo"}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          document.getElementById("errorMsg").textContent = data.message || "Error cargando usuarios";
         }
+      } catch (e) {
+        console.error(e);
+        document.getElementById("errorMsg").textContent = "Error de conexión con el servidor";
+      }
+    }
 
-        // Función para cargar usuarios
-        async function cargarUsuarios() {
-            try {
-                const response = await fetch('/api/usuarios', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if(response.status === 401) {
-                    alert('Sesión expirada. Inicie sesión nuevamente.');
-                    logout();
-                    return;
-                }
-
-                const result = await response.json();
-                if (!result.success) throw new Error(result.message || 'Error en el servidor');
-
-                const tbody = document.querySelector('#usuariosTable tbody');
-                tbody.innerHTML = '';
-
-                result.usuarios.forEach(usuario => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${usuario.UsuarioID}</td>
-                        <td>${usuario.NombreCompleto}</td>
-                        <td>${usuario.Correo}</td>
-                        <td>${usuario.NombreRol}</td>
-                        <td class="${usuario.Estado ? 'status-active' : 'status-inactive'}">
-                            ${usuario.Estado ? 'Activo' : 'Inactivo'}
-                        </td>
-                        <td class="actions">
-                            <button class="btn btn-edit" onclick="editarUsuario(${usuario.UsuarioID})">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            ${usuario.NombreRol !== 'Administrador' ? 
-                                `<button class="btn btn-delete" onclick="eliminarUsuario(${usuario.UsuarioID})">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                 </button>` : ''
-                            }
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error al cargar usuarios:', error);
-                alert('Error al cargar usuarios: ' + error.message);
-            }
-        }
-
-        function editarUsuario(id) {
-            location.href = `agregar_usuario.html?editar=${id}`;
-        }
-
-        async function eliminarUsuario(id) {
-            if(confirm('¿Está seguro de eliminar este usuario?')) {
-                try {
-                    const response = await fetch(`/api/usuarios/${id}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-
-                    const data = await response.json();
-                    if (response.ok && data.success) {
-                        alert('Usuario eliminado correctamente');
-                        cargarUsuarios();
-                    } else {
-                        throw new Error(data.message || 'Error al eliminar usuario');
-                    }
-                } catch (error) {
-                    console.error('Error al eliminar usuario:', error);
-                    alert('Error al eliminar usuario: ' + error.message);
-                }
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-
-        document.addEventListener('DOMContentLoaded', cargarUsuarios);
-    </script>
+    document.addEventListener("DOMContentLoaded", cargarUsuarios);
+  </script>
 </body>
 </html>

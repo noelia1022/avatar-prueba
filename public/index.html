@@ -120,10 +120,17 @@
   </div>
 
   <script>
-    // Verificar sesión al cargar
+    // Verificar sesión al cargar (corregido)
     document.addEventListener('DOMContentLoaded', () => {
       const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user'));
+      const userStr = localStorage.getItem('user');
+      let user = null;
+      try {
+        user = userStr ? JSON.parse(userStr) : null;
+      } catch (e) {
+        user = null;
+      }
+
       if (token && user) {
         document.getElementById('mainContent').style.display = 'block';
         document.getElementById('loginPage').style.display = 'none';
