@@ -112,8 +112,12 @@ const api = {};
 // ---------- LOGIN ----------
 api['/api/login'] = {
   POST: async (req, res) => {
-    const { correo, clave } = await getBody(req);
-    if (!correo || !clave) return sendJSON(res, 400, { success: false, message: 'Correo y contraseña requeridos' });
+    const { correo, clave, contrasena, password } = await getBody(req);
+    const pass = clave || contrasena || password;   // 👈 acepta los tres nombres
+
+    if (!correo || !pass) {
+      return sendJSON(res, 400, { success: false, message: 'Correo y contraseña requeridos' });
+    }
 
     const users = await query(
       `SELECT u.*, r.nombrerol
@@ -125,11 +129,11 @@ api['/api/login'] = {
 
     let ok = false;
     if (u.contrasena?.startsWith?.('$2')) {
-      ok = await bcrypt.compare(clave, u.contrasena);
+      ok = await bcrypt.compare(pass, u.contrasena);
     } else {
-      ok = clave === u.contrasena;
+      ok = pass === u.contrasena;
       if (ok) {
-        const hash = await bcrypt.hash(clave, 10);
+        const hash = await bcrypt.hash(pass, 10);
         await query('UPDATE usuarios SET contrasena=$1 WHERE usuarioid=$2', [hash, u.usuarioid]);
       }
     }
@@ -143,6 +147,10 @@ api['/api/login'] = {
     sendJSON(res, 200, { success: true, token });
   }
 };
+
+
+
+
 
 // ---------- USUARIOS ----------
 api['/api/usuarios'] = {
