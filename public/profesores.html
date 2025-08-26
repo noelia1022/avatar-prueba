@@ -81,6 +81,7 @@
 
     // ==== Cargar profesores desde API ====
     async function cargarProfesores() {
+      const tbody = document.querySelector('#profesoresTable tbody');
       try {
         const res = await fetch('/api/profesores', {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -93,14 +94,9 @@
         }
 
         const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Error al cargar profesores');
-        }
-
-        const tbody = document.querySelector('#profesoresTable tbody');
         tbody.innerHTML = '';
 
-        if (data.profesores.length === 0) {
+        if (!data.success || !data.profesores || data.profesores.length === 0) {
           tbody.innerHTML = '<tr><td colspan="5">No hay profesores registrados</td></tr>';
           return;
         }
@@ -121,7 +117,7 @@
         });
       } catch (err) {
         console.error('Error:', err);
-        alert('Error al cargar profesores: ' + err.message);
+        tbody.innerHTML = '<tr><td colspan="5">Error al cargar profesores</td></tr>';
       }
     }
 
@@ -134,10 +130,13 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Error al eliminar profesor');
+        if (res.status === 401) {
+          logout();
+          return;
         }
+
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Error al eliminar');
 
         alert('Profesor eliminado correctamente');
         cargarProfesores();

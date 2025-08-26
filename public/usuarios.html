@@ -2,101 +2,49 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Usuarios - Sistema Avatar</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9fafb;
-      color: #2c3e50;
-    }
-    header {
-      background: linear-gradient(135deg,#1e3a8a 0%,#3b82f6 50%,#60a5fa 100%);
-      color: white; padding: 20px;
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    header h1 { margin:0; font-size:1.5rem; }
-    .btn-back {
-      background:white; color:#1e3a8a; border:none; padding:8px 14px;
-      border-radius:8px; cursor:pointer; font-weight:600;
-    }
-    .container { padding:20px; max-width:1000px; margin:0 auto; }
-    table {
-      width:100%; border-collapse: collapse; background:white;
-      border-radius:10px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.05);
-    }
-    th, td { padding:12px; text-align:left; border-bottom:1px solid #eee; }
-    th { background:#f3f4f6; font-weight:600; color:#1e3a8a; }
-    tr:hover { background:#f9fafb; }
-    .error { color:red; margin-top:10px; }
-  </style>
 </head>
 <body>
-  <header>
-    <h1>👥 Usuarios</h1>
-    <button class="btn-back" onclick="window.location.href='index.html'">⬅ Volver</button>
-  </header>
+  <h1>Gestión de Usuarios</h1>
+  <form id="userForm">
+    <input type="text" id="username" placeholder="Usuario" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
+    <select id="rol">
+      <option value="admin">Administrador</option>
+      <option value="profesor">Profesor</option>
+    </select>
+    <button type="submit">Crear Usuario</button>
+  </form>
 
-  <div class="container">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre completo</th>
-          <th>Correo</th>
-          <th>Rol</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody id="tablaUsuarios">
-        <tr><td colspan="5">Cargando...</td></tr>
-      </tbody>
-    </table>
-    <div id="errorMsg" class="error"></div>
-  </div>
+  <h2>Listado de Usuarios</h2>
+  <table border="1" width="100%">
+    <thead><tr><th>Usuario</th><th>Rol</th></tr></thead>
+    <tbody id="tablaUsuarios"><tr><td colspan="2">Cargando...</td></tr></tbody>
+  </table>
 
   <script>
-    async function cargarUsuarios() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        document.getElementById("errorMsg").textContent = "⚠ Debe iniciar sesión primero.";
-        document.getElementById("tablaUsuarios").innerHTML = "<tr><td colspan='5'>No autorizado</td></tr>";
-        return;
-      }
+    const token=localStorage.getItem('token');
+    if(!token) location.href="login.html";
 
-      try {
-        const res = await fetch("/api/usuarios", {
-          headers: { "Authorization": "Bearer " + token }
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          const tbody = document.getElementById("tablaUsuarios");
-          tbody.innerHTML = "";
-          data.usuarios.forEach(u => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${u.usuarioid}</td>
-              <td>${u.nombrecompleto}</td>
-              <td>${u.correo}</td>
-              <td>${u.nombrerol}</td>
-              <td>${u.estado ? "Activo" : "Inactivo"}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        } else {
-          document.getElementById("errorMsg").textContent = data.message || "Error cargando usuarios";
-        }
-      } catch (e) {
-        console.error(e);
-        document.getElementById("errorMsg").textContent = "Error de conexión con el servidor";
-      }
+    async function cargarUsuarios(){
+      const res=await fetch('/api/usuarios',{headers:{Authorization:`Bearer ${token}`}});
+      const data=await res.json();
+      const tbody=document.getElementById('tablaUsuarios');
+      tbody.innerHTML="";
+      data.usuarios.forEach(u=>{
+        tbody.innerHTML+=`<tr><td>${u.username}</td><td>${u.rol}</td></tr>`;
+      });
     }
 
-    document.addEventListener("DOMContentLoaded", cargarUsuarios);
+    document.getElementById('userForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const body={username:username.value,password:password.value,rol:rol.value};
+      await fetch('/api/usuarios',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
+      cargarUsuarios();
+      e.target.reset();
+    });
+
+    document.addEventListener('DOMContentLoaded',cargarUsuarios);
   </script>
 </body>
 </html>

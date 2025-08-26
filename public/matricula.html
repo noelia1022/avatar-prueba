@@ -4,10 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sistema Avatar - Matrícula</title>
-  <link rel="stylesheet" href="styles.css"/> <!-- puedes separar estilos -->
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .logout-container {
+      position: fixed; top: 20px; right: 20px;
+      background: white; padding: 8px 15px; border-radius: 5px;
+      display: flex; gap: 10px; align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-logout { background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; font-weight:bold; }
+    .user-info { color:#444; font-weight:500; }
+  </style>
 </head>
 <body>
 <div class="container">
+  <!-- Cerrar sesión -->
+  <div class="logout-container">
+    <span class="user-info" id="userName"></span>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
+
   <header>
     <h1><span class="logo">Avatar</span> Sistema de Matrícula</h1>
   </header>
@@ -80,7 +96,14 @@
 let estudianteActual=null, periodoActual=null;
 let materiasDisponibles=[], materiasSeleccionadas=[];
 const token = localStorage.getItem('token');
-if(!token){window.location.href="login.html";}
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+if(!token){
+  alert("Debe iniciar sesión");
+  window.location.href="login.html";
+} else {
+  document.getElementById('userName').textContent = user?.nombre || 'Usuario';
+}
 
 // Mostrar alerta
 function mostrarAlerta(msg,tipo="info"){
@@ -91,26 +114,30 @@ function mostrarAlerta(msg,tipo="info"){
 
 // Cargar estudiantes
 async function cargarEstudiantes(){
-  const res=await fetch("/api/estudiantes",{headers:{Authorization:`Bearer ${token}`}});
-  if(res.status===401){localStorage.removeItem('token');return location.href="login.html";}
-  const data=await res.json();
-  const sel=document.getElementById("estudiante");
-  sel.innerHTML="<option value=''>Seleccione...</option>";
-  data.estudiantes.forEach(e=>{
-    sel.innerHTML+=`<option value="${e.estudianteid}">${e.nombre} (${e.cedula})</option>`;
-  });
+  try {
+    const res=await fetch("/api/estudiantes",{headers:{Authorization:`Bearer ${token}`}});
+    if(res.status===401){logout();return;}
+    const data=await res.json();
+    const sel=document.getElementById("estudiante");
+    sel.innerHTML="<option value=''>Seleccione...</option>";
+    (data.estudiantes||[]).forEach(e=>{
+      sel.innerHTML+=`<option value="${e.estudianteid}">${e.nombre} (${e.cedula})</option>`;
+    });
+  } catch(err){ mostrarAlerta("Error cargando estudiantes","error"); }
 }
 
 // Cargar periodos
 async function cargarPeriodos(){
-  const res=await fetch("/api/periodos",{headers:{Authorization:`Bearer ${token}`}});
-  if(res.status===401){localStorage.removeItem('token');return location.href="login.html";}
-  const data=await res.json();
-  const sel=document.getElementById("periodo");
-  sel.innerHTML="<option value=''>Seleccione...</option>";
-  data.periodos.forEach(p=>{
-    sel.innerHTML+=`<option value="${p.periodoid}">${p.nombre} - ${p.anio}</option>`;
-  });
+  try {
+    const res=await fetch("/api/periodos",{headers:{Authorization:`Bearer ${token}`}});
+    if(res.status===401){logout();return;}
+    const data=await res.json();
+    const sel=document.getElementById("periodo");
+    sel.innerHTML="<option value=''>Seleccione...</option>";
+    (data.periodos||[]).forEach(p=>{
+      sel.innerHTML+=`<option value="${p.periodoid}">${p.nombre} - ${p.anio}</option>`;
+    });
+  } catch(err){ mostrarAlerta("Error cargando periodos","error"); }
 }
 
 // Iniciar matrícula
@@ -120,18 +147,22 @@ async function iniciarMatricula(e){
   periodoActual=document.getElementById("periodo").value;
   if(!estudianteActual||!periodoActual)return mostrarAlerta("Seleccione estudiante y periodo","error");
 
-  const res=await fetch(`/api/materias?periodo=${periodoActual}`,{headers:{Authorization:`Bearer ${token}`}});
-  if(res.status===401)return location.href="login.html";
-  const data=await res.json();
-  materiasDisponibles=data.materias||[];
-  mostrarMateriasDisponibles();
-  document.getElementById("resumenMatricula").style.display="block";
+  try {
+    const res=await fetch(`/api/materias?periodo=${periodoActual}`,{headers:{Authorization:`Bearer ${token}`}});
+    if(res.status===401){logout();return;}
+    const data=await res.json();
+    materiasDisponibles=data.materias||[];
+    mostrarMateriasDisponibles();
+    document.getElementById("resumenMatricula").style.display="block";
+  } catch(err){ mostrarAlerta("Error cargando materias","error"); }
 }
 
 // Mostrar materias
 function mostrarMateriasDisponibles(){
   const cont=document.getElementById("materiasDisponibles");
-  if(materiasDisponibles.length===0){cont.innerHTML="<div class='alert alert-info'>No hay materias disponibles</div>";return;}
+  if(materiasDisponibles.length===0){
+    cont.innerHTML="<div class='alert alert-info'>No hay materias disponibles</div>";return;
+  }
   cont.innerHTML="";
   materiasDisponibles.forEach(m=>{
     const costo=m.costo||m.creditos*25000;
@@ -164,7 +195,9 @@ function quitarMateria(id){
 }
 function mostrarMateriasSeleccionadas(){
   const cont=document.getElementById("materiasSeleccionadas");
-  if(materiasSeleccionadas.length===0){cont.innerHTML="<div class='alert alert-info'>No hay materias seleccionadas</div>";return;}
+  if(materiasSeleccionadas.length===0){
+    cont.innerHTML="<div class='alert alert-info'>No hay materias seleccionadas</div>";return;
+  }
   cont.innerHTML="";
   materiasSeleccionadas.forEach(m=>{
     cont.innerHTML+=`
@@ -187,15 +220,19 @@ function actualizarResumen(){
 
 // Confirmar
 async function confirmarMatricula(){
-  if(!estudianteActual||!periodoActual||materiasSeleccionadas.length===0)return mostrarAlerta("Complete todo","error");
+  if(!estudianteActual||!periodoActual||materiasSeleccionadas.length===0)
+    return mostrarAlerta("Complete todo","error");
   const body={estudianteID:estudianteActual,periodoID:periodoActual,tipoMatricula:document.getElementById("tipo").value,materias:materiasSeleccionadas.map(m=>m.materiaid)};
-  const res=await fetch("/api/matriculas",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
-  const data=await res.json();
-  if(data.success){
-    mostrarAlerta("Matrícula registrada","success");
-    document.getElementById("estadoMatricula").textContent="Confirmada";
-    document.getElementById("estadoMatricula").className="status-confirmada";
-  }else mostrarAlerta("Error: "+data.message,"error");
+  try {
+    const res=await fetch("/api/matriculas",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
+    if(res.status===401){logout();return;}
+    const data=await res.json();
+    if(data.success){
+      mostrarAlerta("Matrícula registrada","success");
+      document.getElementById("estadoMatricula").textContent="Confirmada";
+      document.getElementById("estadoMatricula").className="status-confirmada";
+    } else mostrarAlerta("Error: "+data.message,"error");
+  } catch(err){ mostrarAlerta("Error al registrar matrícula","error"); }
 }
 
 // Reset
@@ -206,6 +243,13 @@ function limpiarFormulario(){
   document.getElementById("materiasSeleccionadas").innerHTML="<div class='alert alert-info'>No hay materias seleccionadas</div>";
   document.getElementById("btnConfirmar").disabled=true;
   document.getElementById("resumenMatricula").style.display="none";
+}
+
+// Logout
+function logout(){
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href="login.html";
 }
 
 // Init

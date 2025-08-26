@@ -75,7 +75,7 @@
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Debe iniciar sesión');
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
     }
 
     const matriculaSelect = document.getElementById('matricula');
@@ -101,10 +101,10 @@
         matriculaSelect.innerHTML = '<option value="">Seleccione una matrícula</option>';
         data.matriculas.forEach(m => {
           const opt = document.createElement('option');
-          opt.value = m.MatriculaID;
-          opt.textContent = `${m.Estudiante} - ${m.Periodo} ${m.Anio}`;
-          opt.dataset.estudiante = m.Estudiante;
-          opt.dataset.periodo = `${m.Periodo} ${m.Anio}`;
+          opt.value = m.matriculaid;
+          opt.textContent = `${m.estudiante} - ${m.periodo} ${m.anio}`;
+          opt.dataset.estudiante = m.estudiante;
+          opt.dataset.periodo = `${m.periodo} ${m.anio}`;
           matriculaSelect.appendChild(opt);
         });
       } catch (err) {
@@ -132,9 +132,9 @@
         const data = await res.json();
         
         if (data.success && data.materias.length > 0) {
-          let total = data.materias.reduce((sum, m) => sum + (m.Costo || 0), 0);
+          let total = data.materias.reduce((sum, m) => sum + (m.costo || 0), 0);
           montoInput.value = total.toLocaleString('es-CR');
-          materiasInfo.textContent = data.materias.map(m => m.Nombre).join(', ');
+          materiasInfo.textContent = data.materias.map(m => m.nombre).join(', ');
           infoMatricula.style.display = 'block';
         } else {
           montoInput.value = '0';

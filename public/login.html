@@ -109,8 +109,19 @@
         }
 
         if (response.ok && data.success) {
+          // Guardar el token
           localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.usuario));
+          
+          // Decodificar el token para obtener la información del usuario
+          const payload = JSON.parse(atob(data.token.split('.')[1]));
+          const usuario = {
+            id: payload.id,
+            nombre: payload.nombre,
+            rol: payload.rol,
+            correo: payload.correo
+          };
+          
+          localStorage.setItem('user', JSON.stringify(usuario));
           window.location.href = 'index.html';
         } else {
           errorMsg.textContent = data.message || 'Credenciales incorrectas';

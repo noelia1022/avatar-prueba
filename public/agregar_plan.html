@@ -59,8 +59,8 @@
       <div class="form-group">
         <label for="estado">Estado:</label>
         <select id="estado" required>
-          <option value="1">Activo</option>
-          <option value="0">Inactivo</option>
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
         </select>
       </div>
       
@@ -106,16 +106,16 @@
       if (!validarFormulario()) return;
 
       const planData = {
-        NombrePlan: document.getElementById('nombrePlan').value.trim(),
-        AnioInicio: parseInt(document.getElementById('anioInicio').value),
-        Estado: parseInt(document.getElementById('estado').value)
+        nombreplan: document.getElementById('nombrePlan').value.trim(),
+        anioinicio: parseInt(document.getElementById('anioInicio').value),
+        estado: document.getElementById('estado').value === 'true'
       };
 
       try {
         const token = localStorage.getItem('token');
         if (!token) {
           mostrarMensaje('No está autenticado. Inicie sesión.', false);
-          setTimeout(()=>window.location.href='index.html',1500);
+          setTimeout(()=>window.location.href='login.html',1500);
           return;
         }
         const res = await fetch('/api/planes', {
@@ -124,7 +124,7 @@
           body: JSON.stringify(planData)
         });
         const result = await res.json();
-        if (res.ok) {
+        if (res.ok && result.success) {
           mostrarMensaje('✅ Plan agregado correctamente');
           document.getElementById('planForm').reset();
           setTimeout(()=>window.location.href='planes.html',2000);
@@ -147,7 +147,7 @@
       const token = localStorage.getItem('token');
       if (!token) {
         alert('Debe iniciar sesión.');
-        window.location.href='index.html';
+        window.location.href='login.html';
       }
     }
 

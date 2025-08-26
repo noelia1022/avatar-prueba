@@ -101,7 +101,7 @@
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!token) {
         alert('Debe iniciar sesión primero');
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
         return;
       }
       document.getElementById('userName').textContent = user?.nombre || 'Usuario';
@@ -116,10 +116,10 @@
           const result = await res.json();
           if (!res.ok || !result.success) throw new Error(result.message || 'Error al cargar profesor');
           const p = result.profesor;
-          document.getElementById('profesorId').value = p.ProfesorID;
-          document.getElementById('nombre').value = p.Nombre || '';
-          document.getElementById('correo').value = p.Correo || '';
-          document.getElementById('telefono').value = p.Telefono || '';
+          document.getElementById('profesorId').value = p.profesorid;
+          document.getElementById('nombre').value = p.nombre || '';
+          document.getElementById('correo').value = p.correo || '';
+          document.getElementById('telefono').value = p.telefono || '';
         } catch (err) {
           alert('Error al cargar profesor: '+err.message);
           window.location.href='profesores.html';
@@ -151,7 +151,7 @@
           const res = await fetch(url,{
             method,
             headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-            body:JSON.stringify({ Nombre:nombre, Correo:correo||null, Telefono:telefono||null })
+            body:JSON.stringify({ nombre:nombre, correo:correo||null, telefono:telefono||null })
           });
           const result = await res.json();
           if (res.ok && result.success) {
@@ -166,7 +166,7 @@
 
     function logout(){
       localStorage.clear();
-      window.location.href='index.html';
+      window.location.href='login.html';
     }
   </script>
 </body>

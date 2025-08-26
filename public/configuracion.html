@@ -47,6 +47,14 @@
     .status { display:none; margin:15px 0; padding:10px; border-radius:6px; font-weight:500; }
     .status.success { background:#d4edda; color:#155724; }
     .status.error { background:#f8d7da; color:#721c24; }
+    .logout-container {
+      position: fixed; top: 20px; right: 20px;
+      background: white; padding: 8px 15px; border-radius: 5px;
+      display: flex; gap: 10px; align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-logout { background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; font-weight:bold; }
+    .user-info { color:#444; font-weight:500; }
     @media(max-width:768px){
       nav{flex-direction:column; align-items:center;}
       nav a{width:100%; text-align:center;}
@@ -60,6 +68,11 @@
       <h1><i class="fas fa-cogs"></i> Configuración del Sistema</h1>
       <p>Administra los parámetros principales de Avatar</p>
     </header>
+
+    <div class="logout-container">
+      <span class="user-info" id="userName"></span>
+      <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
 
     <nav>
       <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
@@ -126,6 +139,17 @@
   </div>
 
   <script>
+    const token=localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user')||'{}');
+    if(!token){ alert('Debe iniciar sesión'); location.href='login.html'; }
+    else{ document.getElementById('userName').textContent=user?.nombre||'Usuario'; }
+
+    function logout(){
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      location.href='login.html';
+    }
+
     function showMessage(msg,type){
       const status=document.getElementById('statusMessage');
       status.textContent=msg;
@@ -135,13 +159,12 @@
     }
 
     async function loadConfig(){
-      const token=localStorage.getItem('token');
-      if(!token){ showMessage('Debe iniciar sesión','error'); return; }
       try{
         const res=await fetch('/api/configuraciones',{headers:{'Authorization':'Bearer '+token}});
+        if(res.status===401){ logout(); return; }
         const data=await res.json();
         if(res.ok && data.success){
-          data.configuraciones.forEach(c=>{
+          (data.configuraciones||[]).forEach(c=>{
             if(document.getElementById(c.Clave)) document.getElementById(c.Clave).value=c.Valor;
           });
           showMessage('Configuración cargada','success');
@@ -155,10 +178,7 @@
     }
 
     async function updateConfig(id,clave){
-      const token=localStorage.getItem('token');
-      if(!token){ showMessage('Debe iniciar sesión','error'); return; }
       const valor=document.getElementById(clave).value;
-      // Validaciones
       if(clave==='MaxMateriasPeriodo' && (valor<1 || valor>10)){ showMessage('Debe estar entre 1 y 10','error'); return; }
       if(clave==='IVA' && (valor<0 || valor>100)){ showMessage('El IVA debe estar entre 0 y 100','error'); return; }
       try{
@@ -167,6 +187,7 @@
           headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
           body:JSON.stringify({configId:id,clave,valor})
         });
+        if(res.status===401){ logout(); return; }
         const data=await res.json();
         if(res.ok && data.success){
           showMessage('Configuración guardada','success');

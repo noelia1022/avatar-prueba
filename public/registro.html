@@ -2,157 +2,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro - Sistema Avatar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .register-container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-    h1 {
-      text-align: center;
-      color: #2e86de;
-      margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-    .btn-primary {
-      background-color: #2e86de;
-      color: white;
-    }
-    .btn-primary:hover {
-      background-color: #1c6bc2;
-    }
-    .error {
-      color: #e74c3c;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    .success {
-      color: #27ae60;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    .link {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .link a {
-      color: #2e86de;
-      text-decoration: none;
-    }
-    .link a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <title>Registro Estudiantes - Sistema Avatar</title>
 </head>
 <body>
-  <div class="register-container">
-    <h1>Registro</h1>
-    <form id="registerForm">
-      <div class="form-group">
-        <label for="nombre">Nombre completo</label>
-        <input type="text" id="nombre" name="nombre" required>
-      </div>
-      <div class="form-group">
-        <label for="correo">Correo electrónico</label>
-        <input type="email" id="correo" name="correo" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" required minlength="6">
-      </div>
-      <div class="form-group">
-        <label for="confirmPassword">Confirmar contraseña</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required>
-        <div id="passwordError" class="error"></div>
-      </div>
-      <button type="submit" class="btn btn-primary">Registrarse</button>
-      <div id="message" class="error" style="display:none;"></div>
-    </form>
-    <div class="link">
-      <p>¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a></p>
-    </div>
-  </div>
+  <h1>Registro de Estudiantes</h1>
+  <form id="estForm">
+    <input type="text" id="nombre" placeholder="Nombre completo" required>
+    <input type="text" id="cedula" placeholder="Cédula" required>
+    <input type="email" id="correo" placeholder="Correo" required>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <h2>Listado</h2>
+  <table border="1" width="100%">
+    <thead><tr><th>Nombre</th><th>Cédula</th><th>Correo</th></tr></thead>
+    <tbody id="tablaEstudiantes"><tr><td colspan="3">Cargando...</td></tr></tbody>
+  </table>
 
   <script>
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    const token=localStorage.getItem('token');
+    if(!token) location.href="login.html";
+
+    async function cargarEstudiantes(){
+      const res=await fetch('/api/estudiantes',{headers:{Authorization:`Bearer ${token}`}});
+      const data=await res.json();
+      const tbody=document.getElementById('tablaEstudiantes');
+      tbody.innerHTML='';
+      data.estudiantes.forEach(e=>{
+        tbody.innerHTML+=`<tr><td>${e.nombre}</td><td>${e.cedula}</td><td>${e.correo}</td></tr>`;
+      });
+    }
+
+    document.getElementById('estForm').addEventListener('submit',async e=>{
       e.preventDefault();
-
-      const nombre = document.getElementById('nombre').value.trim();
-      const correo = document.getElementById('correo').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      const messageDiv = document.getElementById('message');
-      const passwordError = document.getElementById('passwordError');
-
-      // Limpiar mensajes
-      messageDiv.style.display = 'none';
-      passwordError.textContent = '';
-
-      // Validación de contraseñas
-      if (password !== confirmPassword) {
-        passwordError.textContent = 'Las contraseñas no coinciden';
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, correo, password })
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          alert('Registro exitoso. Ahora puede iniciar sesión.');
-          window.location.href = 'index.html';
-        } else {
-          messageDiv.textContent = result.message || 'Error en el registro';
-          messageDiv.style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        messageDiv.textContent = 'Error al conectar con el servidor';
-        messageDiv.style.display = 'block';
-      }
+      const body={nombre:nombre.value,cedula:cedula.value,correo:correo.value};
+      await fetch('/api/estudiantes',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(body)});
+      cargarEstudiantes();
+      e.target.reset();
     });
+
+    document.addEventListener('DOMContentLoaded',cargarEstudiantes);
   </script>
 </body>
 </html>

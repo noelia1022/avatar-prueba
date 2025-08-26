@@ -31,37 +31,37 @@
     <form id="usuarioForm">
       <div class="form-group">
         <label for="nombre">Nombre Completo:</label>
-        <input type="text" id="nombre" name="NombreCompleto" required>
+        <input type="text" id="nombre" name="nombrecompleto" required>
       </div>
 
       <div class="form-group">
         <label for="correo">Correo Electrónico:</label>
-        <input type="email" id="correo" name="Correo" required>
+        <input type="email" id="correo" name="correo" required>
       </div>
 
       <div class="form-group" id="contrasenaGroup">
         <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" name="Contrasena">
+        <input type="password" id="contrasena" name="contrasena">
       </div>
 
       <div class="form-group" id="confirmarGroup">
         <label for="confirmar">Confirmar Contraseña:</label>
-        <input type="password" id="confirmar" name="ConfirmarContrasena">
+        <input type="password" id="confirmar" name="confirmarcontrasena">
         <div id="passwordError" class="error"></div>
       </div>
 
       <div class="form-group">
         <label for="rol">Rol:</label>
-        <select id="rol" name="RolID" required>
+        <select id="rol" name="rolid" required>
           <option value="">Seleccionar rol</option>
         </select>
       </div>
 
       <div class="form-group">
         <label for="estado">Estado:</label>
-        <select id="estado" name="Estado">
-          <option value="1">Activo</option>
-          <option value="0">Inactivo</option>
+        <select id="estado" name="estado">
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
         </select>
       </div>
 
@@ -79,7 +79,7 @@
 
     if (!token) {
       alert('Debe iniciar sesión primero');
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
     }
 
     // Cargar roles desde la API
@@ -91,8 +91,8 @@
         const select = document.getElementById('rol');
         data.roles.forEach(rol => {
           const opt = document.createElement('option');
-          opt.value = rol.RolID;
-          opt.textContent = rol.NombreRol;
+          opt.value = rol.rolid;
+          opt.textContent = rol.nombrerol;
           select.appendChild(opt);
         });
       } catch(err) {
@@ -108,10 +108,10 @@
         const data = await res.json();
         if (!res.ok || !data.usuario) throw new Error(data.message || 'Usuario no encontrado');
         const u = data.usuario;
-        document.getElementById('nombre').value = u.NombreCompleto;
-        document.getElementById('correo').value = u.Correo;
-        document.getElementById('rol').value = u.RolID;
-        document.getElementById('estado').value = u.Estado ? '1':'0';
+        document.getElementById('nombre').value = u.nombrecompleto;
+        document.getElementById('correo').value = u.correo;
+        document.getElementById('rol').value = u.rolid;
+        document.getElementById('estado').value = u.estado ? 'true':'false';
       } catch(err) {
         console.error(err);
         alert('Error al cargar usuario: '+err.message);
@@ -137,10 +137,10 @@
       errorDiv.style.display = 'none';
 
       const data = {
-        NombreCompleto: document.getElementById('nombre').value.trim(),
-        Correo: document.getElementById('correo').value.trim(),
-        RolID: parseInt(document.getElementById('rol').value),
-        Estado: parseInt(document.getElementById('estado').value)
+        nombrecompleto: document.getElementById('nombre').value.trim(),
+        correo: document.getElementById('correo').value.trim(),
+        rolid: parseInt(document.getElementById('rol').value),
+        estado: document.getElementById('estado').value === 'true'
       };
 
       if (!editarId) {
@@ -156,7 +156,7 @@
           errorDiv.style.display = 'block';
           return;
         }
-        data.Contrasena = contrasena;
+        data.contrasena = contrasena;
       }
 
       try {

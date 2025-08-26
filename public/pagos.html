@@ -2,27 +2,56 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pagos - Sistema Avatar</title>
+  <title>Sistema Avatar - Pagos</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
-    h1 { text-align: center; color: #2e86de; }
+    body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
+    h1 { text-align:center; color:#2e86de; }
+    nav { text-align:center; margin-bottom:20px; }
+    nav a { margin:10px; text-decoration:none; color:#444; font-weight:bold; }
+    nav a:hover { color:#2e86de; }
     .btn {
-      display: inline-block; padding: 10px 15px; margin: 10px 0;
-      border-radius: 5px; text-decoration: none; font-weight: bold;
+      display:inline-block; padding:10px 15px; margin:10px 0;
+      border-radius:5px; text-decoration:none; font-weight:bold;
     }
-    .btn-primary { background: #2e86de; color: white; }
-    .btn-primary:hover { background: #1c6bc7; }
-    table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
-    th { background: #2e86de; color: white; }
-    tr:nth-child(even) { background: #f9f9f9; }
+    .btn-primary { background:#2e86de; color:white; }
+    .btn-primary:hover { background:#1c6bc7; }
+    table { width:100%; border-collapse:collapse; background:white; margin-top:20px; }
+    th, td { padding:12px; border:1px solid #ddd; text-align:center; }
+    th { background:#2e86de; color:white; }
+    tr:nth-child(even) { background:#f9f9f9; }
     .alert { text-align:center; padding:15px; margin-top:20px; border-radius:5px; }
     .alert-info { background:#d1ecf1; color:#0c5460; }
     .alert-error { background:#f8d7da; color:#721c24; }
+    .logout-container {
+      position: fixed; top: 20px; right: 20px;
+      background: white; padding: 8px 15px; border-radius: 5px;
+      display: flex; gap: 10px; align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn-logout { background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; font-weight:bold; }
+    .user-info { color:#444; font-weight:500; }
   </style>
 </head>
 <body>
+  <!-- Botón de cerrar sesión -->
+  <div class="logout-container">
+    <span class="user-info" id="userName"></span>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
+
   <h1>Gestión de Pagos</h1>
+
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="usuarios.html">Usuarios</a>
+    <a href="estudiantes.html">Estudiantes</a>
+    <a href="profesores.html">Profesores</a>
+    <a href="materias.html">Materias</a>
+    <a href="planes.html">Planes de estudio</a>
+    <a href="matricula.html">Matrícula</a>
+    <a href="configuracion.html">Configuración</a>
+  </nav>
+
   <div style="text-align:right;">
     <a href="registrar_pago.html" class="btn btn-primary">+ Registrar Pago</a>
   </div>
@@ -45,9 +74,13 @@
 
   <script>
     const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
     if (!token) {
       alert('Debe iniciar sesión');
       window.location.href = 'login.html';
+    } else {
+      document.getElementById('userName').textContent = user?.nombre || 'Usuario';
     }
 
     async function cargarPagos() {
@@ -58,9 +91,9 @@
         });
 
         if (res.status === 401) {
-          localStorage.removeItem('token');
           alert('Sesión expirada, por favor vuelva a iniciar sesión');
-          return window.location.href = 'login.html';
+          logout();
+          return;
         }
 
         const data = await res.json();
@@ -89,6 +122,12 @@
         console.error('Error cargando pagos:', err);
         tbody.innerHTML = `<tr><td colspan="6" class="alert alert-error">Error al conectar con el servidor</td></tr>`;
       }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
     }
 
     document.addEventListener('DOMContentLoaded', cargarPagos);
